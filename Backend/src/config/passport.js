@@ -26,7 +26,7 @@ passport.use(
           // Send registration email for new Google users
           await sendRegistrationEmail(user.email, user.name);
         }
-        
+
         return done(null, user);
       } catch (err) {
         return done(err, null);

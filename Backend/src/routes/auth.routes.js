@@ -22,12 +22,14 @@ authRouter.get(
 
 authRouter.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:5173/login",
+  }),
   function (req, res) {
     // Successful authentication
     console.log(req.user);
     req.session.save(() => {
-      res.redirect("/"); // Edit for correct redirect link
+      res.redirect("http://localhost:5173/");
     });
   },
 );
