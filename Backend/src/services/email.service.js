@@ -46,12 +46,12 @@ async function sendRegistrationEmail(userEmail, name) {
   await sendEmail(userEmail, subject, text, html);
 }
 
-async function forgetPasswordEmail(userEmail, name) {
+async function forgetPasswordEmail(userEmail, name, resetLink) {
   const subject = "Forget Password - Ecommerce App";
-  const text = `Hello ${name},\n\nWe received a request to reset the password for your account. To reset your password, click the link below:\n\n[Link]\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Ecommerce App Team`;
+  const text = `Hello ${name},\n\nWe received a request to reset the password for your account. To reset your password, click the link below:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Ecommerce App Team`;
   const html = `<p>Hello ${name},</p>
-<p>We received a request to reset your password. Click the button below to proceed:</p>
-<a href="#" 
+<p>We received a request to reset the password for your account. Click the button below to proceed:</p>
+<a href="${resetLink}" 
    style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
    Reset Password
 </a>

@@ -31,3 +31,8 @@ export const forgetPasswordApi = async (email) => {
   const response = await api.post("/forget-password", { email });
   return response.data;
 };
+
+export const resetPasswordApi = async (password, confirmPassword, token) => {
+  const response = await api.post("/reset-password", { password, confirmPassword, token });
+  return response.data;
+};

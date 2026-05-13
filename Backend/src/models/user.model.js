@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       allowNull: true, // This field will only be populated for OAuth users
     },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
     role: {
       type: String,
       enum: ["user", "seller", "admin"],

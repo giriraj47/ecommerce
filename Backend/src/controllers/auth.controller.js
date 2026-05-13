@@ -219,10 +219,54 @@ async function forgetPassword(req, res) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  await forgetPasswordEmail(email, user.name);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
+
+  await userModel.findByIdAndUpdate(user._id, {
+    resetPasswordToken: token,
+    resetPasswordExpires: Date.now() + 1000 * 60 * 15,
+  });
+
+  const link = `http://localhost:5173/reset-password?token=${token}`;
+
+  await forgetPasswordEmail(email, user.name, link);
 
   return res.status(200).json({
     message: "Email sent successfully",
+  });
+}
+
+async function resetPassword(req, res) {
+  const { password, confirmPassword, token } = req.body;
+
+  if (!token || !password || !confirmPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
+  }
+
+  const user = await userModel.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "Token is invalid or expired" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await userModel.findByIdAndUpdate(user._id, {
+    password: hashedPassword,
+    resetPasswordToken: null,
+    resetPasswordExpires: null,
+  });
+
+  return res.status(200).json({
+    message: "Password reset successfully",
   });
 }
 
@@ -234,4 +278,5 @@ module.exports = {
   updateProfile,
   deleteUser,
   forgetPassword,
+  resetPassword,
 };
