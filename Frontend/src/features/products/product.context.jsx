@@ -6,6 +6,8 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   return (
     <ProductContext.Provider
@@ -16,6 +18,10 @@ export const ProductProvider = ({ children }) => {
         setLoading,
         error,
         setError,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
       }}
     >
       {children}

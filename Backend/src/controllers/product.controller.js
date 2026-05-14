@@ -41,12 +41,11 @@ const createProduct = async (req, res) => {
       images: imageUrls,
     });
 
-    // Invalidate Cache
-    await client.del("products:all");
+    const keys = await client.keys("products:*");
 
-    // await client.set(cacheKey, JSON.stringify(products), {
-    //   EX: 0,
-    // });
+    if (keys.length > 0) {
+      await client.del(keys);
+    }
 
     // 3. Response
     res.status(201).json({
@@ -60,48 +59,24 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {
-  const cacheKey = "products:all";
+const deleteProduct = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 16;
 
-  // 1. Try fetching from Redis
-  const cachedData = await client.get(cacheKey);
-
-  if (cachedData) {
-    console.log("Serving from Redis Cache");
-    return res.status(200).json({
-      success: true,
-      products: JSON.parse(cachedData),
-    });
-  }
-
-  console.log("Serving from MongoDB (Cache Miss)");
-  const products = await productModel
-    .find()
-    .select("name price")
-    .slice("images", 1);
-
-  // 3. Set cache (TTL: 1 hour)
-  await client.set(cacheKey, JSON.stringify(products), {
-    EX: 3600,
-  });
-
-  res.status(200).json({
-    success: true,
-    products,
-  });
-};
-
-const getProductById = async (req, res) => {
-  const product = await productModel
-    .findById(req.params.id)
-    .select("name description price category sizes colors images stock");
-
+  const skip = (page - 1) * limit;
+  const product = await productModel.findByIdAndDelete(req.params.id);
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
   }
 
-  res.status(200).json({ message: "Product found", product });
+  const keys = await client.keys("products:*");
+
+  if (keys.length > 0) {
+    await client.del(keys);
+  }
+
+  res.status(200).json({ success: true, message: "Product deleted" });
 };
 
 const updateProduct = async (req, res) => {
@@ -174,17 +149,73 @@ const updateProduct = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
-  const product = await productModel.findByIdAndDelete(req.params.id);
+const getAllProducts = async (req, res) => {
+  try {
+    // Query params
+    const page = parseInt(req.query.page) || 1;
+    const limit = 16;
+
+    const skip = (page - 1) * limit;
+
+    // Create unique cache key for each page
+    const cacheKey = `products:page=${page}`;
+
+    // 1. Try Redis cache
+    const cachedData = await client.get(cacheKey);
+
+    if (cachedData) {
+      console.log("Serving from Redis Cache");
+
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
+    console.log("Serving from MongoDB (Cache Miss)");
+
+    // 2. Fetch paginated products
+    const products = await productModel
+      .find()
+      .select("name price")
+      .slice("images", 1)
+      .skip(skip)
+      .limit(limit);
+
+    // Optional: total products count
+    const totalProducts = await productModel.countDocuments();
+
+    const responseData = {
+      success: true,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
+      products,
+    };
+
+    // 3. Save to Redis
+    await client.set(cacheKey, JSON.stringify(responseData), {
+      EX: 3600,
+    });
+
+    // 4. Send response
+    res.status(200).json(responseData);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const getProductById = async (req, res) => {
+  const product = await productModel
+    .findById(req.params.id)
+    .select("name description price category sizes colors images stock");
+
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
   }
 
-  // Invalidate Cache
-  await client.del("products:all");
-
-  res.status(200).json({ success: true, message: "Product deleted" });
+  res.status(200).json({ message: "Product found", product });
 };
 
 module.exports = {

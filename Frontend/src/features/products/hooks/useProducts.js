@@ -10,21 +10,35 @@ import {
 
 export const useProducts = () => {
   const context = useContext(ProductContext);
+  const params = new URLSearchParams(location.search);
+  const page = params.get("page") || 1;
 
   if (!context) {
     throw new Error("useProducts must be used within a ProductProvider");
   }
 
-  const { products, setProducts, loading, setLoading, error, setError } =
-    context;
+  const {
+    products,
+    setProducts,
+    loading,
+    setLoading,
+    error,
+    setError,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    setTotalPages,
+  } = context;
 
-  const getAllProducts = async () => {
+  const getAllProducts = async (page = 1) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllProductsApi();
+      const data = await getAllProductsApi(page);
       // Adjusting based on common API response pattern
       setProducts(Array.isArray(data) ? data : data.products || []);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.totalPages);
       return data;
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch products");
@@ -104,5 +118,7 @@ export const useProducts = () => {
     updateProduct,
     deleteProduct,
     clearError,
+    currentPage,
+    totalPages,
   };
 };
