@@ -1,6 +1,12 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context";
-import { loginApi, registerApi, logoutApi, forgetPasswordApi, resetPasswordApi } from "../services/auth.api";
+import {
+  loginApi,
+  registerApi,
+  logoutApi,
+  forgetPasswordApi,
+  resetPasswordApi,
+} from "../services/auth.api";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -18,6 +24,7 @@ export const useAuth = () => {
     setLoading,
     error,
     setError,
+    isAdmin,
   } = context;
 
   const login = async (email, password) => {
@@ -43,6 +50,7 @@ export const useAuth = () => {
       const data = await registerApi(name, email, password);
       setUser(data.user);
       setIsAuthenticated(true);
+
       return data;
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
@@ -103,5 +111,6 @@ export const useAuth = () => {
     forgotPassword,
     resetPassword,
     clearError,
+    isAdmin,
   };
 };

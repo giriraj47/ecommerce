@@ -4,6 +4,7 @@ import { getMeApi } from "./services/auth.api";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,11 @@ export const AuthProvider = ({ children }) => {
         const data = await getMeApi();
         setUser(data.user);
         setIsAuthenticated(true);
+        if (data.user.role === "admin") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
       } catch (err) {
         setIsAuthenticated(false);
         setUser(null);
@@ -37,6 +43,7 @@ export const AuthProvider = ({ children }) => {
         setLoading,
         error,
         setError,
+        isAdmin,
       }}
     >
       {children}

@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("./config/passport");
+const productRouter = require("./routes/product.routes");
 
 const app = express();
 
@@ -32,8 +33,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/auth", authRouter);
-
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -43,5 +42,8 @@ app.get("/login/error", (req, res) => {
     message: "Login failed",
   });
 });
+
+app.use("/api/auth", authRouter);
+app.use("/api/products", productRouter);
 
 module.exports = app;
