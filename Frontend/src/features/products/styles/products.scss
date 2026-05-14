@@ -1,8 +1,28 @@
 @import "./admin_modals.scss";
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.inline-loader {
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+  color: var(--primary-color);
+  font-size: 1em;
+}
+
 .products-page {
   padding: 2rem 5%;
   max-width: 1400px;
   margin: 0 auto;
+  transition: opacity 0.3s ease;
+
+  &.is-loading {
+    .products-grid {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
 
   .page-title {
     margin-bottom: 2rem;
@@ -63,7 +83,7 @@
 }
 
 .product-card {
-  position: relative; // Added
+  position: relative;
   background: var(--card-bg);
   border-radius: 12px;
   overflow: hidden;
@@ -75,6 +95,7 @@
     box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  will-change: transform;
 
   &:hover {
     transform: translateY(-5px);

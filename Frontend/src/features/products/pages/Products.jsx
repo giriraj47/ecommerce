@@ -11,23 +11,25 @@ const Products = () => {
     useProducts();
   const { isAdmin } = useAuth();
 
-  const currentPage = params.get("page") || 1;
+  const currentPage = Number(params.get("page")) || 1;
 
   useEffect(() => {
-    setParams({ page: currentPage });
-  }, []);
+    if (!params.get("page")) {
+      setParams({ page: 1 }, { replace: true });
+    }
+  }, [params, setParams]);
 
   useEffect(() => {
-    getAllProducts(params.get("page"));
-  }, [params]);
+    getAllProducts(currentPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
-  if (loading) return <div className="loading-state">Loading products...</div>;
   if (error) return <div className="error-state">{error}</div>;
 
   return (
     <>
-      <div className="products-page">
-        <h1 className="page-title">All Products</h1>
+      <div className={`products-page ${loading ? "is-loading" : ""}`}>
+        <h1 className="page-title">All Products {loading && <span className="inline-loader">...</span>}</h1>
         <div className="products-grid">
           {products.map((product) => (
             <Link
