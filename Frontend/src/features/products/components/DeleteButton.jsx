@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const DeleteButton = ({ productId, productName, onDeleteSuccess }) => {
   const [showModal, setShowModal] = useState(false);
   const { deleteProduct, loading } = useProducts();
-
+  const { user } = useAuth();
   const handleDelete = async (e) => {
     e.preventDefault();
     e.stopPropagation();

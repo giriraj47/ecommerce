@@ -1,9 +1,22 @@
 require("dotenv").config();
 const app = require("./src/app");
 const connectDb = require("./src/config/db");
+const { connectRedis } = require("./src/config/redis");
 
-connectDb();
+async function startApp() {
+  try {
+    // Connect to MongoDB
+    await connectDb();
 
-app.listen(3000, () => {
-  console.log("Server started on port 3000...");
-});
+    // Connect to Cloud Redis
+    await connectRedis();
+
+    app.listen(3000, () => {
+      console.log("Server running on http://localhost:3000");
+    });
+  } catch (error) {
+    console.error("Setup failed:", error);
+  }
+}
+
+startApp();

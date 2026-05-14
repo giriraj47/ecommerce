@@ -1,5 +1,6 @@
 const productModel = require("../models/product.model");
 const { uploadImage } = require("../services/storage.service");
+const { client } = require("../config/redis");
 
 const createProduct = async (req, res) => {
   if (req.user.role !== "admin") {
@@ -40,6 +41,13 @@ const createProduct = async (req, res) => {
       images: imageUrls,
     });
 
+    // Invalidate Cache
+    await client.del("products:all");
+
+    // await client.set(cacheKey, JSON.stringify(products), {
+    //   EX: 0,
+    // });
+
     // 3. Response
     res.status(201).json({
       success: true,
@@ -53,13 +61,34 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  // slice: 1 means "get the first 1 element"
+  const cacheKey = "products:all";
+
+  // 1. Try fetching from Redis
+  const cachedData = await client.get(cacheKey);
+
+  if (cachedData) {
+    console.log("Serving from Redis Cache");
+    return res.status(200).json({
+      success: true,
+      products: JSON.parse(cachedData),
+    });
+  }
+
+  console.log("Serving from MongoDB (Cache Miss)");
   const products = await productModel
     .find()
     .select("name price")
     .slice("images", 1);
 
-  res.status(200).json(products);
+  // 3. Set cache (TTL: 1 hour)
+  await client.set(cacheKey, JSON.stringify(products), {
+    EX: 3600,
+  });
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
 };
 
 const getProductById = async (req, res) => {
@@ -131,6 +160,9 @@ const updateProduct = async (req, res) => {
       },
     );
 
+    // Invalidate Cache
+    await client.del("products:all");
+
     res.status(200).json({
       success: true,
       data: updatedProduct,
@@ -148,6 +180,10 @@ const deleteProduct = async (req, res) => {
     res.status(404);
     throw new Error("Product not found");
   }
+
+  // Invalidate Cache
+  await client.del("products:all");
+
   res.status(200).json({ success: true, message: "Product deleted" });
 };
 
