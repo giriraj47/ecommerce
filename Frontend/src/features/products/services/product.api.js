@@ -7,8 +7,10 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export const getAllProductsApi = async (page = 1) => {
-  const response = await api.get(`/get-all-products?page=${page}`);
+export const getAllProductsApi = async (page = 1, search = "") => {
+  const response = await api.get(
+    `/get-all-products?search=${search}&page=${page}`,
+  );
   return response.data;
 };
 

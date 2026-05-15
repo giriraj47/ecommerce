@@ -153,12 +153,20 @@ const getAllProducts = async (req, res) => {
   try {
     // Query params
     const page = parseInt(req.query.page) || 1;
-    const limit = 16;
+    const search = req.query.search || "";
 
+    const limit = 16;
     const skip = (page - 1) * limit;
 
+    const filter = {
+      name: {
+        $regex: search,
+        $options: "i", // case-insensitive
+      },
+    };
+
     // Create unique cache key for each page
-    const cacheKey = `products:page=${page}`;
+    const cacheKey = `products:search=${search}:page=${page}`;
 
     // 1. Try Redis cache
     const cachedData = await client.get(cacheKey);
@@ -173,20 +181,21 @@ const getAllProducts = async (req, res) => {
 
     // 2. Fetch paginated products
     const products = await productModel
-      .find()
+      .find(filter)
       .select("name price")
       .slice("images", 1)
       .skip(skip)
       .limit(limit);
 
     // Optional: total products count
-    const totalProducts = await productModel.countDocuments();
+    const totalProducts = await productModel.countDocuments(filter);
 
     const responseData = {
       success: true,
       currentPage: page,
       totalPages: Math.ceil(totalProducts / limit),
       totalProducts,
+      search,
       products,
     };
 

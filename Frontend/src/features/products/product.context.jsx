@@ -8,6 +8,7 @@ export const ProductProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
 
   return (
     <ProductContext.Provider
@@ -22,6 +23,8 @@ export const ProductProvider = ({ children }) => {
         setCurrentPage,
         totalPages,
         setTotalPages,
+        search,
+        setSearch,
       }}
     >
       {children}

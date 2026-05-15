@@ -28,17 +28,20 @@ export const useProducts = () => {
     setCurrentPage,
     totalPages,
     setTotalPages,
+    search,
+    setSearch,
   } = context;
 
-  const getAllProducts = async (page = 1) => {
+  const getAllProducts = async (page = 1, search = "") => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllProductsApi(page);
+      const data = await getAllProductsApi(page, search);
       // Adjusting based on common API response pattern
       setProducts(Array.isArray(data) ? data : data.products || []);
       setCurrentPage(data.currentPage);
       setTotalPages(data.totalPages);
+      setSearch(data.search);
       return data;
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch products");
@@ -120,5 +123,6 @@ export const useProducts = () => {
     clearError,
     currentPage,
     totalPages,
+    search,
   };
 };

@@ -1,35 +1,53 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useAuth } from "../../auth/hooks/useAuth";
 import DeleteButton from "../components/DeleteButton";
 import "../styles/products.scss";
+import { updateParams } from "../utils/UpdateParams";
 
 const Products = () => {
+  const [query, setQuery] = useState("");
   const [params, setParams] = useSearchParams();
   const { products, loading, error, getAllProducts, totalPages } =
     useProducts();
   const { isAdmin } = useAuth();
 
   const currentPage = Number(params.get("page")) || 1;
+  const search = params.get("search") || "";
+
+  const handleSearch = () => {
+    updateParams(setParams, 1, query);
+  };
 
   useEffect(() => {
-    if (!params.get("page")) {
-      setParams({ page: 1 }, { replace: true });
-    }
-  }, [params, setParams]);
-
-  useEffect(() => {
-    getAllProducts(currentPage);
+    getAllProducts(currentPage, search);
+    setQuery(search);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
+  }, [currentPage, search]);
 
   if (error) return <div className="error-state">{error}</div>;
 
   return (
     <>
       <div className={`products-page ${loading ? "is-loading" : ""}`}>
-        <h1 className="page-title">All Products {loading && <span className="inline-loader">...</span>}</h1>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
+        <h1 className="page-title">
+          All Products {loading && <span className="inline-loader">...</span>}
+        </h1>
         <div className="products-grid">
           {products.map((product) => (
             <Link
@@ -66,7 +84,7 @@ const Products = () => {
 
       <div className="pagination">
         <button
-          onClick={() => setParams({ page: Number(currentPage) - 1 })}
+          onClick={() => updateParams(setParams, currentPage - 1, search)}
           disabled={currentPage === 1}
         >
           Previous
@@ -75,7 +93,7 @@ const Products = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() => setParams({ page: Number(currentPage) + 1 })}
+          onClick={() => updateParams(setParams, currentPage + 1, search)}
           disabled={currentPage === totalPages}
         >
           Next
