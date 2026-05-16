@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { useCart } from "../../cart/hooks/useCart";
 import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
 import "../styles/products.scss";
@@ -10,7 +11,8 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProductById, loading, error } = useProducts();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
+  const { addToCart, loading: cartLoading } = useCart();
   const [product, setProduct] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
 
@@ -25,6 +27,16 @@ const ProductDetails = () => {
     };
     fetchProduct();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      // You can either redirect to login or show a message
+      alert("Please login to add items to your cart.");
+      navigate("/login");
+      return;
+    }
+    await addToCart(product._id, 1);
+  };
 
   if (loading)
     return <div className="loading-state">Loading product details...</div>;
@@ -118,9 +130,10 @@ const ProductDetails = () => {
 
           <button
             className="add-to-cart-big-btn"
-            disabled={product.stock === 0}
+            disabled={product.stock === 0 || cartLoading}
+            onClick={handleAddToCart}
           >
-            {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+            {cartLoading ? "Adding..." : (product.stock > 0 ? "Add to Cart" : "Out of Stock")}
           </button>
         </div>
       </div>

@@ -1,9 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
+import { useCart } from "../features/cart/hooks/useCart";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
+  const { cartItems } = useCart();
+  const navigate = useNavigate();
 
   return (
     <nav className="navbar">
@@ -21,17 +25,38 @@ const Navbar = () => {
           <>
             {isAdmin && (
               <li>
-                <Link to="/admin/create-product" className="admin-link">Create Product</Link>
+                <Link to="/admin/create-product" className="admin-link">
+                  Create Product
+                </Link>
               </li>
             )}
             <li>
-              <span>
-                Welcome, {user?.name} 
-                {isAdmin && <span className="admin-badge"> (Admin)</span>}
-              </span>
+              <Link to="/profile" className="profile-link">
+                Profile
+              </Link>
             </li>
             <li>
-              <button onClick={logout} className="logout-btn">
+              <Link to="/cart" className="cart-link">
+                Cart{" "}
+                {cartItems?.length > 0 && (
+                  <span className="cart-count">({cartItems.length})</span>
+                )}
+              </Link>
+            </li>
+            <li>
+              <Link to="/profile" className="welcome-link">
+                Welcome, {user?.name}
+                {isAdmin && <span className="admin-badge"> (Admin)</span>}
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                }}
+                className="logout-btn"
+              >
                 Logout
               </button>
             </li>

@@ -169,21 +169,19 @@ async function getCurrentUser(req, res) {
 
 async function updateProfile(req, res) {
   try {
-    const { name, password } = req.body;
-
-    if (!name || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    const { name, password, addresses } = req.body;
 
     const user = await userModel.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     if (name) user.name = name;
-    if (password) user.password = hashedPassword;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+    if (addresses) user.addresses = addresses;
 
     await user.save();
 
@@ -193,6 +191,7 @@ async function updateProfile(req, res) {
         id: user._id,
         name: user.name,
         email: user.email,
+        addresses: user.addresses,
       },
     });
   } catch (err) {

@@ -6,6 +6,7 @@ import {
   logoutApi,
   forgetPasswordApi,
   resetPasswordApi,
+  updateProfileApi,
 } from "../services/auth.api";
 
 export const useAuth = () => {
@@ -98,6 +99,21 @@ export const useAuth = () => {
     }
   };
 
+  const updateProfile = async (data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await updateProfileApi(data);
+      setUser(response.user);
+      return response;
+    } catch (err) {
+      setError(err.response?.data?.message || "Profile update failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const clearError = () => setError(null);
 
   return {
@@ -110,6 +126,7 @@ export const useAuth = () => {
     logout,
     forgotPassword,
     resetPassword,
+    updateProfile,
     clearError,
     isAdmin,
   };

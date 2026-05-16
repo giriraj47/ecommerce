@@ -1,7 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
 import { Navigate } from "react-router";
 
-const Protected = ({ children }) => {
+const Protected = ({ children, adminOnly = false }) => {
   const { loading, user, isAdmin } = useAuth();
 
   if (loading) {
@@ -16,11 +16,11 @@ const Protected = ({ children }) => {
     return <Navigate to={"/"} />;
   }
 
-  if (isAdmin) {
-    return children;
+  if (adminOnly && !isAdmin) {
+    return <h1>You are not authorized to access this page</h1>;
   }
 
-  return <h1>You are not authorized to access this page</h1>;
+  return children;
 };
 
 export default Protected;

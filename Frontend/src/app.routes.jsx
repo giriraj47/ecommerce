@@ -10,6 +10,8 @@ import ProductDetails from "./features/products/pages/ProductDetails";
 import CreateProduct from "./features/products/pages/CreateProduct";
 import UpdateProduct from "./features/products/pages/UpdateProduct";
 import Protected from "./features/auth/components/Protected";
+import Cart from "./features/cart/pages/Cart";
+import Profile from "./features/auth/pages/Profile";
 
 const AppRoutes = () => {
   return (
@@ -22,9 +24,25 @@ const AppRoutes = () => {
       <Route path="/products" element={<Products />} />
       <Route path="/products/:id" element={<ProductDetails />} />
       <Route
-        path="/admin/create-product"
+        path="/profile"
         element={
           <Protected>
+            <Profile />
+          </Protected>
+        }
+      />
+      <Route 
+        path="/cart" 
+        element={
+          <Protected>
+            <Cart />
+          </Protected>
+        } 
+      />
+      <Route
+        path="/admin/create-product"
+        element={
+          <Protected adminOnly={true}>
             <CreateProduct />
           </Protected>
         }
@@ -32,7 +50,7 @@ const AppRoutes = () => {
       <Route
         path="/admin/update-product/:id"
         element={
-          <Protected>
+          <Protected adminOnly={true}>
             <UpdateProduct />
           </Protected>
         }
