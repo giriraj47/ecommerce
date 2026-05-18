@@ -83,12 +83,16 @@ export const useProducts = () => {
   const updateProduct = async (id, productData) => {
     setLoading(true);
     setError(null);
+
     try {
       const data = await updateProductApi(id, productData);
-      setProducts((prev) => prev.map((p) => (p._id === id ? data.data : p)));
+
+      setProducts((prev) => prev.map((p) => (p._id === id ? data.product : p)));
+
       return data;
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update product");
+
       throw err;
     } finally {
       setLoading(false);

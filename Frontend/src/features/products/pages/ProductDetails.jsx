@@ -105,18 +105,15 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {product.sizes && product.sizes.length > 0 && (
+            {
               <div className="option-group">
                 <h3>Available Sizes</h3>
                 <div className="size-list">
-                  {product.sizes.map((size, index) => (
-                    <span key={index} className="size-tag">
-                      {size}
-                    </span>
-                  ))}
+                  <span className="size-tag">{product.size}</span>
+                  <span className="size-tag">{product.measurements}</span>
                 </div>
               </div>
-            )}
+            }
           </div>
 
           <div className="stock-info">
@@ -133,7 +130,11 @@ const ProductDetails = () => {
             disabled={product.stock === 0 || cartLoading}
             onClick={handleAddToCart}
           >
-            {cartLoading ? "Adding..." : (product.stock > 0 ? "Add to Cart" : "Out of Stock")}
+            {cartLoading
+              ? "Adding..."
+              : product.stock > 0
+                ? "Add to Cart"
+                : "Out of Stock"}
           </button>
         </div>
       </div>

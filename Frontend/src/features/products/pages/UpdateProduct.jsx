@@ -6,7 +6,8 @@ import "../styles/products.scss";
 const UpdateProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getProductById, updateProduct, loading, error, clearError } = useProducts();
+  const { getProductById, updateProduct, loading, error, clearError } =
+    useProducts();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -35,7 +36,7 @@ const UpdateProduct = () => {
           price: p.price,
           category: p.category,
           stock: p.stock,
-          sizes: p.sizes || [],
+          sizes: p.sizes,
           colors: p.colors ? p.colors.join(", ") : "",
         });
         setExistingImages(p.images || []);
@@ -67,21 +68,23 @@ const UpdateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const data = new FormData();
     data.append("name", formData.name);
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("category", formData.category);
     data.append("stock", formData.stock);
-    
-    formData.sizes.forEach(size => data.append("sizes", size));
-    
-    const colorArray = formData.colors.split(",").map(c => c.trim()).filter(c => c !== "");
-    colorArray.forEach(color => data.append("colors", color));
+    data.append("size", formData.sizes);
+
+    const colorArray = formData.colors
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => c !== "");
+    colorArray.forEach((color) => data.append("colors", color));
 
     // Append new images if any
-    newImages.forEach(image => data.append("image", image));
+    newImages.forEach((image) => data.append("image", image));
 
     try {
       await updateProduct(id, data);
@@ -97,7 +100,7 @@ const UpdateProduct = () => {
       <div className="admin-card">
         <h2>Update Product</h2>
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label>Product Name</label>
@@ -146,9 +149,15 @@ const UpdateProduct = () => {
 
           <div className="form-group">
             <label>Category</label>
-            <select name="category" value={formData.category} onChange={handleChange}>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
               {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                <option key={cat} value={cat}>
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </option>
               ))}
             </select>
           </div>
@@ -160,7 +169,7 @@ const UpdateProduct = () => {
                 <button
                   type="button"
                   key={size}
-                  className={`size-btn ${formData.sizes.includes(size) ? 'active' : ''}`}
+                  className={`size-btn `}
                   onClick={() => handleSizeChange(size)}
                 >
                   {size}

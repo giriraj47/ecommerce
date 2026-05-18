@@ -20,7 +20,6 @@ const CreateProduct = () => {
   const [images, setImages] = useState([]);
 
   const categories = ["clothing", "shoes", "accessories"];
-  const availableSizes = ["S", "M", "L", "XL"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,23 +42,26 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const data = new FormData();
     data.append("name", formData.name);
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("category", formData.category);
     data.append("stock", formData.stock);
-    
+
     // Append sizes individually
-    formData.sizes.forEach(size => data.append("sizes", size));
-    
+    formData.sizes.forEach((size) => data.append("sizes", size));
+
     // Handle colors (comma separated string to array)
-    const colorArray = formData.colors.split(",").map(c => c.trim()).filter(c => c !== "");
-    colorArray.forEach(color => data.append("colors", color));
+    const colorArray = formData.colors
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => c !== "");
+    colorArray.forEach((color) => data.append("colors", color));
 
     // Append images
-    images.forEach(image => data.append("image", image));
+    images.forEach((image) => data.append("image", image));
 
     try {
       await createProduct(data);
@@ -75,7 +77,7 @@ const CreateProduct = () => {
       <div className="admin-card">
         <h2>Create New Product</h2>
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label>Product Name</label>
@@ -128,27 +130,30 @@ const CreateProduct = () => {
 
           <div className="form-group">
             <label>Category</label>
-            <select name="category" value={formData.category} onChange={handleChange}>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
               {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                <option key={cat} value={cat}>
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
             <label>Sizes</label>
-            <div className="checkbox-group">
-              {availableSizes.map((size) => (
-                <button
-                  type="button"
-                  key={size}
-                  className={`size-btn ${formData.sizes.includes(size) ? 'active' : ''}`}
-                  onClick={() => handleSizeChange(size)}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
+            <input
+              type="text"
+              name="sizes"
+              value={formData.sizes}
+              onChange={handleChange}
+              placeholder="describe the measurements of the product"
+              required
+            />
+            <div className="checkbox-group"></div>
           </div>
 
           <div className="form-group">

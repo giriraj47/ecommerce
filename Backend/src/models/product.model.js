@@ -6,34 +6,46 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     description: {
       type: String,
     },
+
     price: {
       type: Number,
       required: true,
     },
+
     category: {
       type: String,
       enum: ["clothing", "shoes", "accessories"],
       required: true,
     },
-    sizes: {
-      type: [String],
-      enum: ["S", "M", "L", "XL"],
-      required: true,
+
+    size: {
+      type: String,
+      default: null,
     },
+
+    measurements: {
+      type: String,
+      default: null,
+    },
+
     colors: {
       type: [String],
       required: true,
     },
+
     images: {
       type: [String],
       default: [],
     },
+
     stock: {
       type: Number,
       required: true,
+      default: 1,
     },
   },
   { timestamps: true },

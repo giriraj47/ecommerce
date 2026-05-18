@@ -29,7 +29,7 @@ export const createProductApi = async (productData) => {
 };
 
 export const updateProductApi = async (id, productData) => {
-  const response = await api.put(`/update-product/${id}`, productData, {
+  const response = await api.patch(`/update-product/${id}`, productData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

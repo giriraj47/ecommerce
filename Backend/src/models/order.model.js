@@ -84,6 +84,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["cod", "card", "upi"],
       required: true,
+      default: "cod",
     },
 
     paymentStatus: {
@@ -113,7 +114,7 @@ const orderSchema = new mongoose.Schema(
       default: 0,
     },
 
-    finalAmount: {
+    totalAmount: {
       type: Number,
       required: true,
     },

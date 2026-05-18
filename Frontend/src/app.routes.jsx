@@ -12,6 +12,8 @@ import UpdateProduct from "./features/products/pages/UpdateProduct";
 import Protected from "./features/auth/components/Protected";
 import Cart from "./features/cart/pages/Cart";
 import Profile from "./features/auth/pages/Profile";
+import MyOrders from "./features/orders/pages/MyOrders";
+import AdminOrders from "./features/orders/pages/AdminOrders";
 
 const AppRoutes = () => {
   return (
@@ -39,6 +41,14 @@ const AppRoutes = () => {
           </Protected>
         } 
       />
+      <Route 
+        path="/orders" 
+        element={
+          <Protected>
+            <MyOrders />
+          </Protected>
+        } 
+      />
       <Route
         path="/admin/create-product"
         element={
@@ -52,6 +62,14 @@ const AppRoutes = () => {
         element={
           <Protected adminOnly={true}>
             <UpdateProduct />
+          </Protected>
+        }
+      />
+      <Route
+        path="/admin/orders"
+        element={
+          <Protected adminOnly={true}>
+            <AdminOrders />
           </Protected>
         }
       />

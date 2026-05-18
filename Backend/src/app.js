@@ -6,6 +6,7 @@ const session = require("express-session");
 const passport = require("./config/passport");
 const productRouter = require("./routes/product.routes");
 const cartRouter = require("./routes/cart.routes");
+const orderRouter = require("./routes/order.routes");
 
 const app = express();
 
@@ -47,5 +48,6 @@ app.get("/login/error", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/orders", orderRouter);
 
 module.exports = app;

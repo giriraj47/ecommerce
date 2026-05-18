@@ -24,11 +24,18 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             {isAdmin && (
-              <li>
-                <Link to="/admin/create-product" className="admin-link">
-                  Create Product
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link to="/admin/create-product" className="admin-link">
+                    Create Product
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/admin/orders" className="admin-link">
+                    Manage Orders
+                  </Link>
+                </li>
+              </>
             )}
             <li>
               <Link to="/profile" className="profile-link">
@@ -41,6 +48,11 @@ const Navbar = () => {
                 {cartItems?.length > 0 && (
                   <span className="cart-count">({cartItems.length})</span>
                 )}
+              </Link>
+            </li>
+            <li>
+              <Link to="/orders" className="orders-link">
+                My Orders
               </Link>
             </li>
             <li>

@@ -10,8 +10,16 @@ const createProduct = async (req, res) => {
   }
 
   try {
-    const { name, description, price, category, sizes, colors, stock } =
-      req.body;
+    const {
+      name,
+      description,
+      price,
+      category,
+      size,
+      colors,
+      stock,
+      measurements,
+    } = req.body;
 
     // 1. Basic Validation
     if (!name || !description || !price || !category) {
@@ -36,8 +44,9 @@ const createProduct = async (req, res) => {
       price,
       category,
       stock,
-      sizes: Array.isArray(sizes) ? sizes : [sizes],
-      colors: Array.isArray(colors) ? colors : [colors],
+      size,
+      measurements,
+      colors: colors,
       images: imageUrls,
     });
 
@@ -95,9 +104,9 @@ const updateProduct = async (req, res) => {
       const uploadPromises = req.files.map((file) => uploadImage(file.path));
       const newImageUrls = await Promise.all(uploadPromises);
 
-      updateData.images = newImageUrls;
+      // updateData.images = newImageUrls;
 
-      // updateData.images = [...product.images, ...newImageUrls];
+      updateData.images = [...product.images, ...newImageUrls];
     }
 
     if (updateData.name) {
@@ -113,14 +122,10 @@ const updateProduct = async (req, res) => {
       updateData.category = updateData.category;
     }
     if (updateData.colors) {
-      updateData.colors = Array.isArray(updateData.colors)
-        ? updateData.colors
-        : [updateData.colors];
+      updateData.colors = updateData.colors;
     }
     if (updateData.sizes) {
-      updateData.sizes = Array.isArray(updateData.sizes)
-        ? updateData.sizes
-        : [updateData.sizes];
+      updateData.sizes = updateData.sizes;
     }
     if (updateData.stock) {
       updateData.stock = Number(updateData.stock);
@@ -182,7 +187,7 @@ const getAllProducts = async (req, res) => {
     // 2. Fetch paginated products
     const products = await productModel
       .find(filter)
-      .select("name price")
+      .select("name price stock")
       .slice("images", 1)
       .skip(skip)
       .limit(limit);
@@ -217,7 +222,9 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   const product = await productModel
     .findById(req.params.id)
-    .select("name description price category sizes colors images stock");
+    .select(
+      "name description price category size colors images stock measurements",
+    );
 
   if (!product) {
     res.status(404);
