@@ -7,6 +7,7 @@ const passport = require("./config/passport");
 const productRouter = require("./routes/product.routes");
 const cartRouter = require("./routes/cart.routes");
 const orderRouter = require("./routes/order.routes");
+const paymentRouter = require("./routes/payment.routes");
 
 const app = express();
 
@@ -49,5 +50,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/payment", paymentRouter);
 
 module.exports = app;

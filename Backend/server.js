@@ -2,6 +2,7 @@ require("dotenv").config();
 const app = require("./src/app");
 const connectDb = require("./src/config/db");
 const { connectRedis } = require("./src/config/redis");
+const razorpay = require("./src/config/razorpay");
 
 async function startApp() {
   try {

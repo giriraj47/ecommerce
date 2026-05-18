@@ -1,7 +1,9 @@
 const orderModel = require("../models/order.model");
+const userModel = require("../models/user.model");
 const { client } = require("../config/redis");
 const cartModel = require("../models/cart.model");
 const productModel = require("../models/product.model");
+const { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } = require("../services/email.service");
 
 const createOrder = async (req, res) => {
   try {
@@ -52,8 +54,8 @@ const createOrder = async (req, res) => {
       shippingAddress,
       paymentMethod,
       totalAmount: cart.totalAmount,
-      paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
-      orderStatus: "pending",
+      paymentStatus: paymentMethod === "cod" ? "pending" : "paid",
+      orderStatus: paymentMethod === "cod" ? "confirmed" : "paid",
     });
 
     // Reduce stock
@@ -72,6 +74,14 @@ const createOrder = async (req, res) => {
 
     // Clear Redis cache
     await client.del(`carts:${req.user.id}`);
+
+    // Send order confirmation email asynchronously
+    const user = await userModel.findById(req.user.id);
+    if (user) {
+      sendOrderConfirmationEmail(user.email, user.name, order).catch((err) => {
+        console.error("Failed to send order email:", err);
+      });
+    }
 
     res.status(201).json({
       message: "Order created successfully",
@@ -154,6 +164,14 @@ const updateOrderStatus = async (req, res) => {
 
     order.orderStatus = status;
     await order.save();
+
+    // Send order status update email asynchronously
+    const user = await userModel.findById(order.user);
+    if (user) {
+      sendOrderStatusUpdateEmail(user.email, user.name, order).catch((err) => {
+        console.error("Failed to send order status update email:", err);
+      });
+    }
 
     res.status(200).json({
       message: "Order status updated successfully",
