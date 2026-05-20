@@ -159,6 +159,9 @@ const getAllProducts = async (req, res) => {
     // Query params
     const page = parseInt(req.query.page) || 1;
     const search = req.query.search || "";
+    const category = req.query.category || "";
+    const sort = req.query.sort || "";
+    const price = req.query.price || "";
 
     const limit = 16;
     const skip = (page - 1) * limit;
@@ -170,8 +173,67 @@ const getAllProducts = async (req, res) => {
       },
     };
 
+    // Category mapping
+    if (category && category !== "ALL") {
+      if (category === "FOOTWARE") {
+        filter.category = "shoes";
+      } else if (category === "ACCESSORIES") {
+        filter.category = "accessories";
+      } else if (category === "TOPS") {
+        filter.category = "clothing";
+        if (search) {
+          filter.$and = [
+            { name: { $regex: search, $options: "i" } },
+            { name: { $regex: /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i } }
+          ];
+        } else {
+          filter.name = { $regex: /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i };
+        }
+      } else if (category === "BOTTOMS") {
+        filter.category = "clothing";
+        if (search) {
+          filter.$and = [
+            { name: { $regex: search, $options: "i" } },
+            { name: { $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i } }
+          ];
+        } else {
+          filter.name = { $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i };
+        }
+      }
+    }
+
+    // Price bands mapping
+    if (price) {
+      const bands = price.split(",").map(b => b.trim()).filter(b => b !== "");
+      if (bands.length > 0) {
+        const priceFilters = bands.map((band) => {
+          if (band === "Under $25") return { price: { $lt: 25 } };
+          if (band === "$25 - $50") return { price: { $gte: 25, $lte: 50 } };
+          if (band === "$50 - $100") return { price: { $gte: 50, $lte: 100 } };
+          if (band === "$100 - $200") return { price: { $gte: 100, $lte: 200 } };
+          if (band === "$200 - $500") return { price: { $gte: 200, $lte: 500 } };
+          if (band === "Above $500") return { price: { $gt: 500 } };
+          return null;
+        }).filter(f => f !== null);
+
+        if (priceFilters.length > 0) {
+          filter.$or = priceFilters;
+        }
+      }
+    }
+
+    // Sorting
+    let sortQuery = {};
+    if (sort === "Price: Low to High") {
+      sortQuery.price = 1;
+    } else if (sort === "Price: High to Low") {
+      sortQuery.price = -1;
+    } else if (sort === "Newest") {
+      sortQuery.createdAt = -1;
+    }
+
     // Create unique cache key for each page
-    const cacheKey = `products:search=${search}:page=${page}`;
+    const cacheKey = `products:search=${search}:category=${category}:sort=${sort}:price=${price}:page=${page}`;
 
     // 1. Try Redis cache
     const cachedData = await client.get(cacheKey);
@@ -187,6 +249,7 @@ const getAllProducts = async (req, res) => {
     // 2. Fetch paginated products
     const products = await productModel
       .find(filter)
+      .sort(sortQuery)
       .select("name price stock")
       .slice("images", 1)
       .skip(skip)

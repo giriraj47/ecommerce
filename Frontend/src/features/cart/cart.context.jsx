@@ -10,6 +10,7 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export const CartProvider = ({ children }) => {
     } else {
       setCartItems([]);
       setTotalAmount(0);
+      setIsCartOpen(false);
     }
   }, [user]);
 
@@ -47,6 +49,8 @@ export const CartProvider = ({ children }) => {
         error,
         setError,
         fetchCart,
+        isCartOpen,
+        setIsCartOpen,
       }}
     >
       {children}

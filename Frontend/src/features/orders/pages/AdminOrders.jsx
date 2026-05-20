@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getAllOrdersApi, updateOrderStatusApi } from "../services/order.api";
+import "../styles/orders.scss";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -36,104 +37,55 @@ const AdminOrders = () => {
     }
   };
 
-  if (loading) return <div className="loading">Loading admin dashboard...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <div className="loading-state">Loading admin dashboard...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
-    <div
-      className="admin-orders-container"
-      style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}
-    >
-      <h2
-        style={{
-          marginBottom: "2rem",
-          fontSize: "2rem",
-          color: "var(--primary-color)",
-        }}
-      >
-        Manage Orders
-      </h2>
+    <div className="admin-orders-page">
+      <h2>Manage Orders</h2>
       {orders.length === 0 ? (
-        <p>No orders found.</p>
+        <p className="start-shopping-msg">No orders found.</p>
       ) : (
-        <div className="table-responsive" style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              background: "var(--card-bg)",
-              borderRadius: "8px",
-              overflow: "hidden",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          >
-            <thead
-              style={{
-                background: "var(--primary-color)",
-                color: "white",
-                textAlign: "left",
-              }}
-            >
+        <div className="table-responsive">
+          <table className="admin-orders-table">
+            <thead>
               <tr>
-                <th style={{ padding: "1rem" }}>Order ID</th>
-                <th style={{ padding: "1rem" }}>Customer</th>
-                <th style={{ padding: "1rem" }}>Total</th>
-                <th style={{ padding: "1rem" }}>Payment</th>
-                <th style={{ padding: "1rem" }}>Status</th>
-                <th style={{ padding: "1rem" }}>Actions</th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr
-                  key={order._id}
-                  style={{ borderBottom: "1px solid var(--border-color)" }}
-                >
-                  <td style={{ padding: "1rem" }}>{order._id}</td>
-                  <td style={{ padding: "1rem" }}>
-                    {order.user ? order.user.name : "Unknown"} <br />
-                    <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>
+                    <span className="cust-name">{order.user ? order.user.name : "Unknown"}</span>
+                    <br />
+                    <span className="cust-email">
                       {order.user ? order.user.email : ""}
                     </span>
                   </td>
-                  <td style={{ padding: "1rem" }}>
-                    ${order.totalAmount.toFixed(2)}
-                  </td>
-                  <td style={{ padding: "1rem", textTransform: "capitalize" }}>
+                  <td>${order.totalAmount.toFixed(2)}</td>
+                  <td style={{ textTransform: "capitalize" }}>
                     {order.paymentMethod}
                   </td>
-                  <td style={{ padding: "1rem" }}>
-                    <span
-                      style={{
-                        padding: "0.25rem 0.5rem",
-                        borderRadius: "4px",
-                        fontSize: "0.85rem",
-                        fontWeight: "600",
-                        background:
-                          order.orderStatus === "delivered"
-                            ? "#dcfce7"
-                            : "#fef9c3",
-                        color:
-                          order.orderStatus === "delivered"
-                            ? "#166534"
-                            : "#854d0e",
-                      }}
-                    >
+                  <td>
+                    <span className={`admin-status-badge status-${order.orderStatus}`}>
                       {order.orderStatus}
                     </span>
                   </td>
-                  <td style={{ padding: "1rem" }}>
+                  <td>
                     <select
+                      className="status-select"
                       value={order.orderStatus}
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
                       disabled={order.orderStatus === "delivered"}
-                      style={{
-                        padding: "0.5rem",
-                        borderRadius: "4px",
-                        border: "1px solid var(--border-color)",
-                      }}
                     >
                       <option value="pending">Pending</option>
                       <option value="confirmed">Confirmed</option>

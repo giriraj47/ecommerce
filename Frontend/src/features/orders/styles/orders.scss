@@ -1,0 +1,291 @@
+$font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$color-bg: #ffffff;
+$color-text: #1a1a1a;
+$color-text-muted: #707072;
+$color-border: #e5e5e5;
+$color-black: #000000;
+$color-error: #ff3b30;
+
+.orders-page, .admin-orders-page {
+  font-family: $font-sans;
+  padding: 3rem 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: $color-text;
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+    color: $color-black;
+    border-bottom: 2px solid $color-black;
+    padding-bottom: 0.75rem;
+    display: inline-block;
+  }
+
+  .start-shopping-msg {
+    font-size: 1.1rem;
+    color: $color-text-muted;
+    margin-top: 2rem;
+
+    a {
+      color: $color-black;
+      font-weight: 600;
+      text-decoration: underline;
+      
+      &:hover {
+        color: #333333;
+      }
+    }
+  }
+
+  /* ── My Orders List ────────────────────────────────────────────────────── */
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── My Order Card ─────────────────────────────────────────────────────── */
+  .order-card {
+    background: $color-bg;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid $color-border;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.01);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .order-header {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      border-bottom: 1px solid $color-border;
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+
+      @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      div {
+        color: $color-text-muted;
+
+        strong {
+          color: $color-black;
+          display: block;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+
+    /* Minimalist status badge colors */
+    .status-text {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+
+      &.status-delivered {
+        background-color: #eafaf1;
+        color: #1a7f37;
+      }
+      &.status-pending {
+        background-color: #fffbeb;
+        color: #b45309;
+      }
+      &.status-confirmed, &.status-shipped {
+        background-color: #f2f2f7;
+        color: $color-black;
+      }
+      &.status-cancelled {
+        background-color: #ffeef0;
+        color: $color-error;
+      }
+    }
+
+    /* Order Items list inside card */
+    .order-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .order-item-row {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+
+        img {
+          width: 70px;
+          height: 85px;
+          object-fit: cover;
+          border-radius: 6px;
+          border: 1px solid rgba(0, 0, 0, 0.02);
+          background-color: #f7f7f9;
+        }
+
+        .no-image-placeholder {
+          width: 70px;
+          height: 85px;
+          background: #f1f5f9;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: $color-text-muted;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .order-item-info {
+          p:first-child {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0 0 0.25rem 0;
+            color: $color-black;
+          }
+          p:last-child {
+            color: $color-text-muted;
+            font-size: 0.85rem;
+            margin: 0;
+          }
+        }
+      }
+    }
+
+    /* Shipping address capsule */
+    .shipping-details {
+      margin-top: 1.75rem;
+      border-top: 1px dashed $color-border;
+      padding-top: 1.25rem;
+      font-size: 0.85rem;
+      color: $color-text-muted;
+      line-height: 1.5;
+
+      strong {
+        color: $color-black;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  /* ── Admin Dashboard Orders Table ──────────────────────────────────────── */
+  .table-responsive {
+    border: 1px solid $color-border;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.01);
+  }
+
+  .admin-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: $color-bg;
+    text-align: left;
+    font-size: 0.9rem;
+
+    th {
+      background: $color-black;
+      color: #ffffff;
+      padding: 1.1rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    td {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid $color-border;
+      vertical-align: middle;
+      color: $color-text;
+      line-height: 1.4;
+
+      .cust-name {
+        font-weight: 600;
+        color: $color-black;
+      }
+      .cust-email {
+        font-size: 0.8rem;
+        color: $color-text-muted;
+      }
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Status badges inside table */
+    .admin-status-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+
+      &.status-delivered {
+        background-color: #dcfce7;
+        color: #14532d;
+      }
+      &.status-pending {
+        background-color: #fffbeb;
+        color: #78350f;
+      }
+      &.status-confirmed, &.status-shipped {
+        background-color: #f2f2f7;
+        color: $color-black;
+      }
+      &.status-cancelled {
+        background-color: #ffeef0;
+        color: $color-error;
+      }
+    }
+
+    /* Actions dropdown menu inside cells */
+    .status-select {
+      padding: 0.6rem 2.25rem 0.6rem 1.25rem;
+      border-radius: 40px;
+      border: 1px solid $color-border;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $color-black;
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      background-size: 0.85rem;
+
+      &:focus {
+        border-color: $color-black;
+      }
+
+      &:disabled {
+        background-color: #f7f7f9;
+        color: $color-text-muted;
+        cursor: not-allowed;
+        border-color: $color-border;
+      }
+    }
+  }
+}

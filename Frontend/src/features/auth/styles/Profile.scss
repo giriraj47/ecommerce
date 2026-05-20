@@ -1,160 +1,267 @@
+$font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$color-bg: #ffffff;
+$color-text: #1a1a1a;
+$color-text-muted: #707072;
+$color-border: #e5e5e5;
+$color-black: #000000;
+$color-error: #ff3b30;
+
 .profile-container {
+  font-family: $font-sans;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: var(--card-bg);
+  margin: 3rem auto;
+  padding: 3rem;
+  background: $color-bg;
+  border: 1px solid $color-border;
   border-radius: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.01);
+  color: $color-text;
 
   h2 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    color: var(--text-color);
-    text-align: center;
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: $color-black;
+    letter-spacing: -0.02em;
+    border-bottom: 2px solid $color-black;
+    padding-bottom: 0.75rem;
+    display: inline-block;
   }
 
   .profile-section {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid $color-border;
+
+    &:last-of-type {
+      border-bottom: none;
+      margin-bottom: 1.5rem;
+    }
 
     h3 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+      color: $color-black;
     }
   }
 
   .form-group {
     margin-bottom: 1.5rem;
 
+    &.full-width {
+      grid-column: span 2;
+      
+      @media (max-width: 640px) {
+        grid-column: span 1;
+      }
+    }
+
     label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #475569;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: $color-text-muted;
     }
 
     input {
       width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 1rem;
+      padding: 0.8rem 1.25rem;
+      border: 1px solid $color-border;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: $color-black;
+      background-color: #ffffff;
+      outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
 
       &:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        border-color: $color-black;
+      }
+
+      &:disabled {
+        background-color: #f7f7f9;
+        color: $color-text-muted;
+        cursor: not-allowed;
+        border-color: $color-border;
+      }
+    }
+    
+    /* Checkbox layout alignment */
+    label:has(input[type="checkbox"]) {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: normal;
+      cursor: pointer;
+      color: $color-text;
+      
+      input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        cursor: pointer;
       }
     }
   }
 
+  /* ── Address Cards ─────────────────────────────────────────────────────── */
   .address-card {
-    background: #f8fafc;
-    border: 1px solid var(--border-color);
+    background: #ffffff;
+    border: 1px solid $color-border;
     border-radius: 12px;
     padding: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     position: relative;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
-      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     }
 
     .address-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
 
       h4 {
         margin: 0;
-        font-size: 1.1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: $color-black;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
       }
 
-      .address-actions {
-        display: flex;
-        gap: 0.5rem;
+      /* Clean Default Badge */
+      .badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: #f2f2f7;
+        color: $color-black;
+        padding: 0.25rem 0.6rem;
+        border-radius: 20px;
       }
     }
 
     .address-details {
       p {
         margin: 0.25rem 0;
-        color: #64748b;
+        font-size: 0.9rem;
+        color: $color-text-muted;
+        line-height: 1.4;
       }
     }
 
     .remove-address-btn {
-      color: var(--error-color);
+      color: $color-text-muted;
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
+      text-decoration: underline;
+      padding: 0.25rem 0.5rem;
+      border-radius: 20px;
+      transition: all 0.2s;
 
       &:hover {
-        text-decoration: underline;
+        color: $color-error;
+        background-color: #ffeef0;
+        text-decoration: none;
       }
     }
   }
 
+  /* ── Add New Address Form Section ──────────────────────────────────────── */
   .add-address-section {
-    background: #f1f5f9;
-    padding: 1.5rem;
+    background: #fcfcfc;
+    border: 1px solid $color-border;
+    padding: 2rem;
     border-radius: 12px;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    h4 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $color-black;
+    }
 
     .address-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      gap: 1.25rem;
 
-      .full-width {
-        grid-column: span 2;
+      @media (max-width: 640px) {
+        grid-template-columns: 1fr;
       }
     }
   }
 
+  /* Add Address Dashed Capsule Trigger */
   .btn-add-address {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1rem;
     background: transparent;
-    color: var(--primary-color);
-    border: 2px dashed var(--primary-color);
-    border-radius: 8px;
+    color: $color-black;
+    border: 1px dashed $color-black;
+    border-radius: 40px;
     font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 1rem;
+    transition: all 0.2s ease;
+    margin-top: 1.5rem;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.05);
+      background: #fafafa;
+      transform: scale(0.99);
     }
   }
 
+  /* Save profile and Confirm Address capsule buttons */
   .save-profile-btn {
     width: 100%;
-    padding: 1rem;
-    background: var(--primary-color);
+    padding: 1.1rem;
+    background: $color-black;
     color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
+    border: 1px solid $color-black;
+    border-radius: 40px;
+    font-size: 1.05rem;
     font-weight: 600;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     margin-top: 2rem;
 
-    &:hover {
-      background: var(--primary-hover);
+    &:hover:not(:disabled) {
+      background: #333333;
+      border-color: #333333;
+      transform: translateY(-2px);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     &:disabled {
-      opacity: 0.7;
+      background: #cccccc;
+      border-color: #cccccc;
       cursor: not-allowed;
     }
   }

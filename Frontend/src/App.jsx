@@ -5,8 +5,7 @@ import { ProductProvider } from "./features/products/product.context";
 import { CartProvider } from "./features/cart/cart.context";
 import AppRoutes from "./app.routes";
 import Navbar from "./components/Navbar";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import CartDrawer from "./features/cart/components/CartDrawer";
 import "./styles.scss";
 
 const App = () => {
@@ -16,8 +15,8 @@ const App = () => {
         <CartProvider>
           <BrowserRouter>
             <Navbar />
+            <CartDrawer />
             <AppRoutes />
-            <ToastContainer position="bottom-right" />
           </BrowserRouter>
         </CartProvider>
       </ProductProvider>

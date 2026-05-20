@@ -1,0 +1,299 @@
+$font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$color-bg: #ffffff;
+$color-text: #1a1a1a;
+$color-text-muted: #707072;
+$color-border: #e5e5e5;
+$color-black: #000000;
+
+.product-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+  font-family: $font-sans;
+  background-color: $color-bg;
+  color: $color-text;
+
+  // ── Header/Navigation ───────────────────────────────────────────────────
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: $color-text-muted;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $color-black;
+      }
+    }
+
+    .admin-detail-actions {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  // ── Main Content Grid ──────────────────────────────────────────────────
+  .product-details-content {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 4rem;
+
+    @media (max-width: 968px) {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+
+  // ── Left Side: Images Section ──────────────────────────────────────────
+  .product-images-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .main-image {
+      max-width: 100%;
+      max-height: 65vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &:hover {
+        transform: scale(1.03);
+      }
+    }
+
+    .thumbnail-grid {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+
+      // Custom Scrollbar
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #d1d1d6;
+        border-radius: 2px;
+      }
+
+      .thumbnail {
+        flex: 0 0 80px;
+        aspect-ratio: 1;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background-color: #f7f7f7;
+        transition: all 0.2s ease;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &.active {
+          border-color: $color-black;
+          box-shadow: 0 0 0 1px $color-black;
+        }
+      }
+    }
+  }
+
+  // ── Right Side: Info Section ───────────────────────────────────────────
+  .product-info-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .category-tag {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: $color-text-muted;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    .detail-name {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: $color-black;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .detail-price {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: $color-black;
+      margin-bottom: 2.5rem;
+    }
+
+    .detail-description {
+      width: 100%;
+      border-top: 1px solid $color-border;
+      padding-top: 2rem;
+      margin-bottom: 2rem;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: $color-text-muted;
+      }
+    }
+
+    // Options (Sizes & Colors)
+    .detail-options {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      border-top: 1px solid $color-border;
+      padding-top: 2rem;
+      margin-bottom: 2rem;
+
+      .option-group {
+        h3 {
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        // Color tag list
+        .color-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+
+          .color-tag {
+            font-size: 0.9rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid $color-border;
+            border-radius: 40px;
+            color: $color-text;
+            background: none;
+            font-weight: 500;
+            text-transform: capitalize;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: $color-black;
+            }
+          }
+        }
+
+        // Size tag list
+        .size-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+
+          .size-tag {
+            font-size: 0.9rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid $color-border;
+            border-radius: 40px;
+            color: $color-text;
+            background: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: $color-black;
+            }
+          }
+        }
+      }
+    }
+
+    // Stock Information
+    .stock-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: $color-text-muted;
+      margin-bottom: 2.5rem;
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.in-stock {
+          background-color: #34c759; // iOS Green
+        }
+
+        &.out-of-stock {
+          background-color: #ff3b30; // iOS Red
+        }
+      }
+    }
+
+    // Add to Cart Button
+    .add-to-cart-big-btn {
+      width: 100%;
+      padding: 1.25rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $color-bg;
+      background-color: $color-black;
+      border: 1px solid $color-black;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+
+      &:hover:not(:disabled) {
+        background-color: #333333;
+        border-color: #333333;
+        transform: translateY(-2px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        background-color: #cccccc;
+        border-color: #cccccc;
+        color: #ffffff;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

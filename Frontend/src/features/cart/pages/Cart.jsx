@@ -127,7 +127,7 @@ const Cart = () => {
           currency: razorpayOrder.currency,
           name: "E-Commerce Store",
           description: "Secure Order Payment",
-          image: "/favicon.svg",
+          image: "/favicon.png",
           order_id: razorpayOrder.id,
           handler: async function (response) {
             try {

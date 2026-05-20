@@ -4,7 +4,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import { useCart } from "../../cart/hooks/useCart";
 import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
-import "../styles/products.scss";
+import "../styles/productdetails.scss";
 import { useEffect, useState } from "react";
 
 const ProductDetails = () => {
@@ -46,9 +46,6 @@ const ProductDetails = () => {
   return (
     <div className="product-details-container">
       <div className="detail-header">
-        <Link to="/products" className="back-link">
-          ← Back to Products
-        </Link>
         {isAdmin && (
           <div className="admin-detail-actions">
             <EditButton productId={product._id} />
@@ -64,9 +61,7 @@ const ProductDetails = () => {
       <div className="product-details-content">
         {/* Left Side: Images */}
         <div className="product-images-section">
-          <div className="main-image">
-            <img src={product.images[activeImage]} alt={product.name} />
-          </div>
+          <img className="main-image" src={product.images[activeImage]} alt={product.name} />
           <div className="thumbnail-grid">
             {product.images.map((img, index) => (
               <div
@@ -116,14 +111,14 @@ const ProductDetails = () => {
             }
           </div>
 
-          <div className="stock-info">
-            <span
-              className={`status-dot ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}
-            ></span>
-            {product.stock > 0
-              ? `${product.stock} units in stock`
-              : "Out of Stock"}
-          </div>
+          {product.stock < 7 && (
+            <div className="stock-info">
+              <span
+                className={`status-dot ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}
+              ></span>
+              {product.stock === 0 ? "Out of Stock" : `${product.stock} units in stock`}
+            </div>
+          )}
 
           <button
             className="add-to-cart-big-btn"

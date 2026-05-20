@@ -1,0 +1,236 @@
+// Font configurations variables
+$font-syncopate: "Syncopate", sans-serif;
+$font-hubot: "Hubot Sans", sans-serif;
+$font-mona: "Mona Sans", sans-serif;
+
+.custom-footer {
+  background: #050505;
+  width: 100%;
+  // max-width: 1280px;
+  height: auto;
+  min-height: 304px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  /* Top Running Banner Text */
+  .ticker-wrapper {
+    width: 100%;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); // subtle divider
+    overflow: hidden;
+    white-space: nowrap;
+
+    .ticker-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-left: 11px;
+      width: max-content;
+      animation: ticker-slide 20s linear infinite;
+
+      span {
+        font-family: $font-syncopate;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 28px;
+        line-height: 29px;
+        color: #ffffff;
+        text-transform: uppercase;
+      }
+
+      .ticker-icon {
+        width: 25.57px;
+        height: 26px;
+        background: url("https://res.cloudinary.com/dzplbl3yv/image/upload/v1779163941/loogo_xf53lj.png")
+          no-repeat center;
+        background-size: contain;
+        display: inline-block;
+        flex-shrink: 0;
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+
+  /* Main Interactive Area Container */
+  .footer-body {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; // Allows left column to span full height for copyright placement
+    padding: 60px 33px 30px 33px;
+    box-sizing: border-box;
+  }
+
+  /* Left Side: Socials and Copyright Container */
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // Push copyright to bottom
+    min-height: 150px;
+  }
+
+  /* Social Icons Section */
+  .footer-socials {
+    .links-title {
+      margin: 0 0 15px 0;
+      font-family: $font-hubot;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 22px;
+      line-height: 31px;
+      color: #ffffff;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+
+      a {
+        color: #ffffff;
+        transition: opacity 0.2s ease;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  /* Copyright Position (Lower Left styling) */
+  .footer-copyright {
+    font-family: $font-syncopate;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 17.0137px;
+    line-height: 18px;
+    color: #ffffff;
+  }
+
+  /* Center Brand Icon Placement */
+  .footer-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -30%); // Center alignment over the absolute area
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    .logo-image {
+      width: 75px;
+      height: 75px;
+      background: url("https://res.cloudinary.com/dzplbl3yv/image/upload/v1779163941/loogo_xf53lj.png")
+        no-repeat center;
+      background-size: contain;
+      filter: brightness(0) invert(1);
+    }
+    
+    .logo-text {
+      font-family: $font-syncopate;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+  }
+
+  /* Navigation System Links Block */
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; // Text-align right behavior natively
+    text-align: right;
+    margin-right: 50px; // Padding offset from edges
+
+    .links-title {
+      margin: 0 0 15px 0;
+      font-family: $font-hubot;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 22px;
+      line-height: 31px;
+      color: #ffffff;
+    }
+
+    .links-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px; // Calculates the space derived from your layout tops (32px differences)
+
+      li a {
+        font-family: $font-mona;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 17.0137px;
+        line-height: 24px;
+        color: #ffffff;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+}
+
+/* Optional responsiveness safety net */
+@media (max-width: 768px) {
+  .custom-footer .footer-body {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding-top: 30px;
+  }
+  .custom-footer .footer-left {
+    align-items: center;
+    text-align: center;
+    min-height: auto;
+    gap: 30px;
+    order: 3; // Push left (copyright/socials) to bottom on mobile
+  }
+  .custom-footer .footer-logo {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
+    order: 1;
+  }
+  .custom-footer .footer-links {
+    align-items: center;
+    text-align: center;
+    margin-right: 0;
+    order: 2;
+  }
+  .custom-footer .footer-copyright {
+    align-self: center;
+    margin-bottom: 0;
+  }
+}
+
+@keyframes ticker-slide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}

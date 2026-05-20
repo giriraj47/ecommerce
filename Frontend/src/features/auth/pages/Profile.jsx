@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { toast } from "react-toastify";
+
 import "../styles/Profile.scss";
 
 const Profile = () => {
@@ -50,7 +50,7 @@ const Profile = () => {
   const addAddress = (e) => {
     e.preventDefault();
     if (!newAddress.fullName || !newAddress.address || !newAddress.phone) {
-      toast.error("Please fill required address fields");
+      alert("Please fill required address fields");
       return;
     }
 
@@ -74,7 +74,7 @@ const Profile = () => {
       isDefault: false,
     });
     setShowAddressForm(false);
-    toast.success("Address added locally. Save profile to persist.");
+    alert("Address added locally. Save profile to persist.");
   };
 
   const removeAddress = (index) => {
@@ -85,7 +85,7 @@ const Profile = () => {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (formData.password && formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      alert("Passwords do not match");
       return;
     }
 
@@ -95,10 +95,10 @@ const Profile = () => {
         password: formData.password || undefined, // Only send if changed
         addresses: formData.addresses,
       });
-      toast.success("Profile updated successfully!");
+      alert("Profile updated successfully!");
       setFormData({ ...formData, password: "", confirmPassword: "" });
     } catch (err) {
-      toast.error(err.message || "Failed to update profile");
+      alert(err.message || "Failed to update profile");
     }
   };
 

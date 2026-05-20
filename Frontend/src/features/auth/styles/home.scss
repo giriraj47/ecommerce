@@ -1,0 +1,238 @@
+@import url("https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Mona+Sans:wght@300;400;500&family=Inter:wght@300;400;500&display=swap");
+
+// ─── Hero Section ────────────────────────────────────────────────────────────
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #090909;
+
+  &-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4.5rem;
+    height: 100px;
+    background: linear-gradient(
+      180deg,
+      rgba(9, 9, 9, 0.4) 0%,
+      rgba(9, 9, 9, 0) 100%
+    );
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      flex: 1;
+      justify-content: flex-start;
+
+      a {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 1.125rem;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 0.01em;
+        transition:
+          color 0.3s ease,
+          opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    &__right {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      flex: 1;
+      justify-content: flex-end;
+
+      a, button {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 1.125rem;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 0.01em;
+        transition:
+          color 0.3s ease,
+          opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    &__logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 auto;
+
+      img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+        transition:
+          filter 0.4s ease,
+          transform 0.4s ease;
+      }
+    }
+
+    &--scrolled {
+      height: 80px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+
+      .hero-nav__left a,
+      .hero-nav__right a,
+      .hero-nav__right button {
+        color: #000;
+      }
+
+      .hero-nav__logo img {
+        filter: none;
+        transform: scale(0.9);
+      }
+    }
+  }
+
+  // ── Scrolling strip ──────────────────────────────────────────────────────
+
+  &__viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &__track {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+  }
+
+  &__slide {
+    flex: 0 0 554px;
+    height: 100%;
+
+    img {
+      width: 554px;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  // ── Gradients ────────────────────────────────────────────────────────────
+
+  &__gradient-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 340px;
+    // Dark scrim rising from bottom — matches Figma's flipped gradient
+    background: linear-gradient(0deg, #090909 0%, rgba(1, 1, 1, 0) 100%);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  // ── Center overlay ───────────────────────────────────────────────────────
+
+  &__content {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 5rem;
+    gap: 3rem;
+  }
+
+  &__nav-line {
+    width: 22px;
+    height: 2.5px;
+    background: #fff;
+    flex-shrink: 0;
+    margin-bottom: 5.5rem; // align with text block centre
+
+    &--left {
+      margin-right: 0;
+    }
+    &--right {
+      transform: scaleX(-1);
+    }
+  }
+
+  &__text {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__title {
+    font-family: "Syncopate", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    line-height: 1.04;
+    color: #fff;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+
+  &__year {
+    font-family: "Mona Sans", "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 2.5rem;
+    line-height: 1.4;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.75rem;
+    padding: 0.6rem 1rem 0.4rem 1rem;
+    background: #fff;
+    color: #000;
+    border-radius: 40px;
+    font-family: "Syncopate", sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      transform 0.18s;
+
+    &:hover {
+      background: #f0f0f0;
+      transform: scale(1.04);
+    }
+  }
+}

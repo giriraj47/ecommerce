@@ -32,11 +32,11 @@ export const useProducts = () => {
     setSearch,
   } = context;
 
-  const getAllProducts = async (page = 1, search = "") => {
+  const getAllProducts = async (page = 1, search = "", category = "", sort = "", price = "") => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllProductsApi(page, search);
+      const data = await getAllProductsApi(page, search, category, sort, price);
       // Adjusting based on common API response pattern
       setProducts(Array.isArray(data) ? data : data.products || []);
       setCurrentPage(data.currentPage);

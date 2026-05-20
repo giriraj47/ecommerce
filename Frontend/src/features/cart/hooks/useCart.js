@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../cart.context";
 import { addToCartApi, updateCartQuantityApi, deleteCartApi } from "../services/cart.api";
-import { toast } from "react-toastify";
+
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -20,6 +20,8 @@ export const useCart = () => {
     error,
     setError,
     fetchCart,
+    isCartOpen,
+    setIsCartOpen,
   } = context;
 
   const addToCart = async (productId, quantity = 1) => {
@@ -28,12 +30,11 @@ export const useCart = () => {
       const data = await addToCartApi(productId, quantity);
       setCartItems(data.products || []);
       setTotalAmount(data.totalAmount || 0);
-      toast.success("Added to cart!");
+      setIsCartOpen(true); // Automatically slide the cart drawer open!
       return data;
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to add to cart";
       setError(msg);
-      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -49,7 +50,6 @@ export const useCart = () => {
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to update cart";
       setError(msg);
-      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -61,11 +61,9 @@ export const useCart = () => {
       await deleteCartApi();
       setCartItems([]);
       setTotalAmount(0);
-      toast.success("Cart cleared");
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to clear cart";
       setError(msg);
-      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -80,5 +78,7 @@ export const useCart = () => {
     addToCart,
     updateQuantity,
     clearCart,
+    isCartOpen,
+    setIsCartOpen,
   };
 };
