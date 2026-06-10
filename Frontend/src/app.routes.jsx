@@ -14,6 +14,7 @@ import Cart from "./features/cart/pages/Cart";
 import Profile from "./features/auth/pages/Profile";
 import MyOrders from "./features/orders/pages/MyOrders";
 import AdminOrders from "./features/orders/pages/AdminOrders";
+import AdminDashboard from "./features/auth/pages/AdminDashboard";
 
 const AppRoutes = () => {
   return (
@@ -33,21 +34,29 @@ const AppRoutes = () => {
           </Protected>
         }
       />
-      <Route 
-        path="/cart" 
+      <Route
+        path="/cart"
         element={
           <Protected>
             <Cart />
           </Protected>
-        } 
+        }
       />
-      <Route 
-        path="/orders" 
+      <Route
+        path="/orders"
         element={
           <Protected>
             <MyOrders />
           </Protected>
-        } 
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <Protected adminOnly={true}>
+            <AdminDashboard />
+          </Protected>
+        }
       />
       <Route
         path="/admin/create-product"

@@ -9,7 +9,7 @@ $color-text-light: #555555;
   background-color: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  // border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   width: 100%;
 
@@ -64,6 +64,64 @@ $color-text-light: #555555;
       &:hover {
         color: $color-text-light;
       }
+    }
+  }
+
+  &__profile-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__profile-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text-light;
+    }
+  }
+
+  &__profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 140px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+    padding: 0.45rem;
+    display: none;
+    z-index: 1001;
+  }
+
+  &__profile-menu:hover &__profile-dropdown,
+  &__profile-menu:focus-within &__profile-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    color: $color-text;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.45rem 0.55rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: $color-text-light;
     }
   }
 

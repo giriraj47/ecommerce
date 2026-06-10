@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
-import "../styles/products.scss";
+import "../../auth/styles/admin.scss";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -14,16 +14,17 @@ const UpdateProduct = () => {
     description: "",
     price: "",
     category: "clothing",
+    subCategory: "",
     stock: "",
-    sizes: [],
+    sizes: "",
     colors: "",
+    measurements: "",
   });
 
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
 
-  const categories = ["clothing", "shoes", "accessories"];
-  const availableSizes = ["S", "M", "L", "XL"];
+  const categories = ["clothing", "footwear", "accessories"];
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -35,9 +36,11 @@ const UpdateProduct = () => {
           description: p.description,
           price: p.price,
           category: p.category,
+          subCategory: p.subCategory,
           stock: p.stock,
-          sizes: p.sizes,
-          colors: p.colors ? p.colors.join(", ") : "",
+          sizes: p.size,
+          colors: p.colors,
+          measurements: p.measurements,
         });
         setExistingImages(p.images || []);
       } catch (err) {
@@ -49,17 +52,18 @@ const UpdateProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) clearError();
-  };
-
-  const handleSizeChange = (size) => {
     setFormData((prev) => {
-      const newSizes = prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size];
-      return { ...prev, sizes: newSizes };
+      const updated = { ...prev, [name]: value };
+      if (name === "category") {
+        if (value === "clothing") {
+          updated.subCategory = "top";
+        } else {
+          updated.subCategory = "";
+        }
+      }
+      return updated;
     });
+    if (error) clearError();
   };
 
   const handleFileChange = (e) => {
@@ -74,14 +78,15 @@ const UpdateProduct = () => {
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("category", formData.category);
+
+    if (formData.category === "clothing") {
+      data.append("subCategory", formData.subCategory);
+    }
+
     data.append("stock", formData.stock);
     data.append("size", formData.sizes);
-
-    const colorArray = formData.colors
-      .split(",")
-      .map((c) => c.trim())
-      .filter((c) => c !== "");
-    colorArray.forEach((color) => data.append("colors", color));
+    data.append("colors", formData.colors);
+    data.append("measurements", formData.measurements);
 
     // Append new images if any
     newImages.forEach((image) => data.append("image", image));
@@ -147,35 +152,64 @@ const UpdateProduct = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Subcategory</label>
+              <select
+                name="subCategory"
+                value={formData.subCategory}
+                onChange={handleChange}
+                disabled={formData.category !== "clothing"}
+                required={formData.category === "clothing"}
+              >
+                {formData.category !== "clothing" ? (
+                  <option value="">N/A (Clothing Only)</option>
+                ) : (
+                  <>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                  </>
+                )}
+              </select>
+            </div>
           </div>
 
           <div className="form-group">
             <label>Sizes</label>
-            <div className="checkbox-group">
-              {availableSizes.map((size) => (
-                <button
-                  type="button"
-                  key={size}
-                  className={`size-btn `}
-                  onClick={() => handleSizeChange(size)}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
+            <input
+              type="text"
+              name="sizes"
+              value={formData.sizes}
+              onChange={handleChange}
+              placeholder="e.g. S, M, L"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Measurements</label>
+            <textarea
+              name="measurements"
+              value={formData.measurements}
+              onChange={handleChange}
+              placeholder="e.g. Model is 182 cm X 74 Kg wearing size S. Length 72cm Chest 73cm"
+              rows="3"
+            ></textarea>
           </div>
 
           <div className="form-group">

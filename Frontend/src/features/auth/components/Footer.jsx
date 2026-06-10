@@ -90,7 +90,7 @@ const Footer = () => {
               <a href="#clothing">Clothing</a>
             </li>
             <li>
-              <a href="#footware">Footware</a>
+              <a href="#footwear">Footwear</a>
             </li>
             <li>
               <a href="#accessories">Accessories</a>

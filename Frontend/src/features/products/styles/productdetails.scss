@@ -1,4 +1,6 @@
-$font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-sans:
+  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+  Arial, sans-serif;
 $color-bg: #ffffff;
 $color-text: #1a1a1a;
 $color-text-muted: #707072;
@@ -6,9 +8,9 @@ $color-border: #e5e5e5;
 $color-black: #000000;
 
 .product-details-container {
-  max-width: 1200px;
+  // max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 2rem 6rem;
+  padding: 0.5rem 7rem 6rem;
   font-family: $font-sans;
   background-color: $color-bg;
   color: $color-text;
@@ -16,9 +18,9 @@ $color-black: #000000;
   // ── Header/Navigation ───────────────────────────────────────────────────
   .detail-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 0.5rem;
 
     .back-link {
       display: inline-flex;
@@ -58,62 +60,65 @@ $color-black: #000000;
     flex-direction: column;
     gap: 1.5rem;
 
-    .main-image {
-      max-width: 100%;
-      max-height: 65vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    .carousel-container {
+      position: relative;
+      width: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-      &:hover {
-        transform: scale(1.03);
+      .main-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .carousel-nav {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        padding: 0 1rem;
+
+        // Base styles for all slider buttons
+        button {
+          background: transparent;
+          border: none;
+          font-size: 1.5rem;
+          color: $color-black;
+          cursor: pointer;
+          opacity: 0.1;
+
+          // Put ALL transitions here so they animate smoothly on hover AND mouse-leave
+          transition:
+            opacity 0.2s ease,
+            transform 0.3s ease-in-out;
+
+          &:hover {
+            opacity: 0.5;
+          }
+
+          // Use '&' to attach the class directly to the button element (button.prev-btn)
+          &.prev-btn {
+            &:hover {
+              transform: translateX(-3px);
+            }
+          }
+
+          &.next-btn {
+            &:hover {
+              transform: translateX(3px);
+            }
+          }
+        }
       }
     }
 
     .thumbnail-grid {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      padding-bottom: 0.5rem;
-
-      // Custom Scrollbar
-      &::-webkit-scrollbar {
-        height: 4px;
-      }
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: #d1d1d6;
-        border-radius: 2px;
-      }
-
-      .thumbnail {
-        flex: 0 0 80px;
-        aspect-ratio: 1;
-        border-radius: 4px;
-        overflow: hidden;
-        border: 1px solid transparent;
-        cursor: pointer;
-        background-color: #f7f7f7;
-        transition: all 0.2s ease;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        &:hover {
-          opacity: 0.8;
-        }
-
-        &.active {
-          border-color: $color-black;
-          box-shadow: 0 0 0 1px $color-black;
-        }
-      }
+      display: none;
     }
   }
 
@@ -145,14 +150,14 @@ $color-black: #000000;
       font-size: 1.75rem;
       font-weight: 600;
       color: $color-black;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1rem;
     }
 
     .detail-description {
       width: 100%;
       border-top: 1px solid $color-border;
-      padding-top: 2rem;
-      margin-bottom: 2rem;
+      padding-top: 1rem;
+      margin-bottom: 1rem;
 
       h3 {
         font-size: 1rem;
@@ -169,68 +174,49 @@ $color-black: #000000;
       }
     }
 
-    // Options (Sizes & Colors)
-    .detail-options {
+    // Specifications List
+    .detail-specifications {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1rem;
       border-top: 1px solid $color-border;
-      padding-top: 2rem;
-      margin-bottom: 2rem;
+      padding-top: 1rem;
+      margin-bottom: 1rem;
 
-      .option-group {
-        h3 {
-          font-size: 0.9rem;
+      .spec-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .spec-label {
           font-weight: 600;
-          margin-bottom: 1rem;
+          color: $color-black;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          font-size: 0.75rem;
+          letter-spacing: 0.08em;
         }
 
-        // Color tag list
-        .color-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
-
-          .color-tag {
-            font-size: 0.9rem;
-            padding: 0.5rem 1.25rem;
-            border: 1px solid $color-border;
-            border-radius: 40px;
-            color: $color-text;
-            background: none;
-            font-weight: 500;
-            text-transform: capitalize;
-            transition: all 0.2s ease;
-
-            &:hover {
-              border-color: $color-black;
-            }
-          }
+        .spec-value {
+          color: $color-text-muted;
+          text-transform: capitalize;
         }
 
-        // Size tag list
-        .size-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
+        &--block {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.35rem;
 
-          .size-tag {
-            font-size: 0.9rem;
-            padding: 0.5rem 1.25rem;
-            border: 1px solid $color-border;
-            border-radius: 40px;
-            color: $color-text;
-            background: none;
-            font-weight: 500;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-
-            &:hover {
-              border-color: $color-black;
-            }
+          .spec-value {
+            text-align: left;
+            line-height: 1.5;
+            text-transform: none;
           }
         }
       }
@@ -238,39 +224,31 @@ $color-black: #000000;
 
     // Stock Information
     .stock-info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
       font-size: 0.95rem;
-      color: $color-text-muted;
       margin-bottom: 2.5rem;
+      font-weight: 500;
 
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
+      &--low {
+        color: #ff3b30;
+        font-weight: 600;
+      }
 
-        &.in-stock {
-          background-color: #34c759; // iOS Green
-        }
-
-        &.out-of-stock {
-          background-color: #ff3b30; // iOS Red
-        }
+      &--out {
+        color: $color-text-muted;
       }
     }
 
     // Add to Cart Button
     .add-to-cart-big-btn {
       width: 100%;
-      padding: 1.25rem;
+      padding: 1rem;
       font-size: 1.1rem;
       font-weight: 600;
       color: $color-bg;
       background-color: $color-black;
       border: 1px solid $color-black;
-      border-radius: 40px;
+      border-radius: 8px;
+
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
@@ -281,7 +259,7 @@ $color-black: #000000;
       &:hover:not(:disabled) {
         background-color: #333333;
         border-color: #333333;
-        transform: translateY(-2px);
+        transition: 0.2s ease-in-out;
       }
 
       &:active:not(:disabled) {

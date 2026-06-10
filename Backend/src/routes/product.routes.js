@@ -6,6 +6,8 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
+  getLatestProducts,
+  getProductsByCategory,
 } = require("../controllers/product.controller");
 const { authUser } = require("../middleware/auth.middleware");
 
@@ -18,8 +20,12 @@ productRouter.post(
   upload.array("image", 5),
   createProduct,
 );
+
 productRouter.get("/get-all-products", getAllProducts);
 productRouter.get("/get-product/:id", getProductById);
+productRouter.get("/latest", getLatestProducts);
+// productRouter.get("/category/:category", getProductsByCategory);
+
 productRouter.patch(
   "/update-product/:id",
   authUser,

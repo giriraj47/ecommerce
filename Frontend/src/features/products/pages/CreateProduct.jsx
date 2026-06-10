@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
-import "../styles/products.scss";
+import "../../auth/styles/admin.scss";
 
 const CreateProduct = () => {
   const navigate = useNavigate();
@@ -12,28 +12,31 @@ const CreateProduct = () => {
     description: "",
     price: "",
     category: "clothing",
+    subCategory: "top",
     stock: "",
-    sizes: [],
+    sizes: "",
     colors: "",
+    measurements: "",
   });
 
   const [images, setImages] = useState([]);
 
-  const categories = ["clothing", "shoes", "accessories"];
+  const categories = ["clothing", "footwear", "accessories"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) clearError();
-  };
-
-  const handleSizeChange = (size) => {
     setFormData((prev) => {
-      const newSizes = prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size];
-      return { ...prev, sizes: newSizes };
+      const updated = { ...prev, [name]: value };
+      if (name === "category") {
+        if (value === "clothing") {
+          updated.subCategory = "top";
+        } else {
+          updated.subCategory = "";
+        }
+      }
+      return updated;
     });
+    if (error) clearError();
   };
 
   const handleFileChange = (e) => {
@@ -48,17 +51,15 @@ const CreateProduct = () => {
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("category", formData.category);
+    
+    if (formData.category === "clothing") {
+      data.append("subCategory", formData.subCategory);
+    }
+    
     data.append("stock", formData.stock);
-
-    // Append sizes individually
-    formData.sizes.forEach((size) => data.append("sizes", size));
-
-    // Handle colors (comma separated string to array)
-    const colorArray = formData.colors
-      .split(",")
-      .map((c) => c.trim())
-      .filter((c) => c !== "");
-    colorArray.forEach((color) => data.append("colors", color));
+    data.append("size", formData.sizes);
+    data.append("colors", formData.colors);
+    data.append("measurements", formData.measurements);
 
     // Append images
     images.forEach((image) => data.append("image", image));
@@ -128,19 +129,41 @@ const CreateProduct = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Subcategory</label>
+              <select
+                name="subCategory"
+                value={formData.subCategory}
+                onChange={handleChange}
+                disabled={formData.category !== "clothing"}
+                required={formData.category === "clothing"}
+              >
+                {formData.category !== "clothing" ? (
+                  <option value="">N/A (Clothing Only)</option>
+                ) : (
+                  <>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                  </>
+                )}
+              </select>
+            </div>
           </div>
 
           <div className="form-group">
@@ -150,10 +173,20 @@ const CreateProduct = () => {
               name="sizes"
               value={formData.sizes}
               onChange={handleChange}
-              placeholder="describe the measurements of the product"
+              placeholder="e.g. S, M, L"
               required
             />
-            <div className="checkbox-group"></div>
+          </div>
+
+          <div className="form-group">
+            <label>Measurements</label>
+            <textarea
+              name="measurements"
+              value={formData.measurements}
+              onChange={handleChange}
+              placeholder="e.g. Model is 182 cm X 74 Kg wearing size S. Length 72cm Chest 73cm"
+              rows="3"
+            ></textarea>
           </div>
 
           <div className="form-group">

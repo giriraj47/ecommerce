@@ -86,7 +86,7 @@ const shopBy = {
       price: "$80.00",
     },
   ],
-  FOOTWARE: [
+  FOOTWEAR: [
     {
       img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/__4_w601yn.webp",
       name: "Classic White Sneakers",
@@ -115,7 +115,7 @@ const shopBy = {
   ],
 };
 
-const CATEGORIES = ["TOPS", "BOTTOMS", "FOOTWARE"];
+const CATEGORIES = ["TOPS", "BOTTOMS", "FOOTWEAR"];
 
 // Generic horizontally-scrollable product row
 const ProductRow = ({ items }) => {

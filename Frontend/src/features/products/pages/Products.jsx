@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -6,7 +6,7 @@ import DeleteButton from "../components/DeleteButton";
 import "../styles/products.scss";
 import { updateParams } from "../utils/UpdateParams";
 
-const CATEGORIES = ["ALL", "TOPS", "BOTTOMS", "FOOTWARE", "ACCESSORIES"];
+const CATEGORIES = ["ALL", "TOPS", "BOTTOMS", "FOOTWEAR", "ACCESSORIES"];
 const SORT_OPTIONS = [
   "Relevance",
   "Price: Low to High",
@@ -35,6 +35,8 @@ const Products = () => {
     useProducts();
   const { isAdmin } = useAuth();
 
+  const priceFilter = useMemo(() => priceBands.join(","), [priceBands]);
+
   const currentPage = Number(params.get("page")) || 1;
   const search = params.get("search") || "";
 
@@ -53,7 +55,7 @@ const Products = () => {
           search,
           activeCategory,
           sortLabel,
-          priceBands.join(",")
+          priceFilter,
         );
         if (data && typeof data.totalProducts !== "undefined") {
           setTotalProductsCount(data.totalProducts);
@@ -65,7 +67,7 @@ const Products = () => {
       }
     };
     fetchFilteredProducts();
-    
+
     // Sync React state back to URLSearchParams silently (without re-triggering this effect)
     const newParams = {};
     if (currentPage > 1) newParams.page = currentPage;
@@ -73,13 +75,12 @@ const Products = () => {
     setParams(newParams, { replace: true });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage, search, activeCategory, sortLabel, priceBands]);
+  }, [currentPage, search, activeCategory, sortLabel, priceFilter]);
 
   if (error) return <div className="pp-error">{error}</div>;
 
   return (
     <div className="pp">
-
       {/* ── Sub-header: Categories title + Sort + Count ───────────────────── */}
       <div className="pp__subheader">
         <h1 className="pp__page-title">Categories</h1>

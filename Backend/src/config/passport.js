@@ -2,6 +2,8 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const userModel = require("../models/user.model");
 const { sendRegistrationEmail } = require("../services/email.service");
+const bcrypt = require("bcrypt");
+
 
 /* Passport Middleware */
 passport.use(
@@ -13,14 +15,30 @@ passport.use(
     },
     async function (token, tokenSecret, profile, done) {
       try {
-        console.log(profile);
-        let user = await userModel.findOne({ googleId: profile.id });
+        const email = profile.emails[0].value;
+        let user = await userModel.findOne({ email });
+
+        if (user) {
+          // 2. If they exist but don't have their Google ID saved yet, link it!
+          if (!user.googleId) {
+            user.googleId = profile.id;
+            // Optional: you can also sync their profile picture if they don't have one
+            if (!user.avatar) user.avatar = profile.photos[0].value;
+
+            await user.save();
+          }
+
+          // Log them in successfully
+          return done(null, user);
+        }
 
         if (!user) {
+          const hashedPassword = await bcrypt.hash(profile.id, 10);
           user = await userModel.create({
             name: profile.displayName,
             email: profile.emails[0].value,
             googleId: profile.id,
+            password: hashedPassword,
           });
 
           // Send registration email for new Google users

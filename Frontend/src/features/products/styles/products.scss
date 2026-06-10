@@ -21,7 +21,6 @@ $color-border-dark: #333333;
     box-sizing: border-box;
   }
 
-
   // ── Sub-header ─────────────────────────────────────────────────────
   &__subheader {
     display: flex;
@@ -269,7 +268,7 @@ $color-border-dark: #333333;
   }
 
   &__card-name {
-    font-weight: 700;
+    // font-weight: 700;
     font-size: 0.95rem;
     margin: 0;
     line-height: 1.3;

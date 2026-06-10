@@ -6,50 +6,96 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
     description: {
       type: String,
     },
-
     price: {
       type: Number,
       required: true,
     },
-
     category: {
       type: String,
-      enum: ["clothing", "shoes", "accessories"],
+      enum: ["clothing", "footwear", "accessories"],
       required: true,
+    },
+
+    // NEW: Subcategory field
+    subCategory: {
+      type: String,
+      enum: ["top", "bottom"],
+      // 1. Make it required ONLY if the category is "clothing"
+      required: function () {
+        let category = this.category;
+        if (!category && typeof this.getUpdate === "function") {
+          const update = this.getUpdate();
+          if (update) {
+            category = (update.$set && update.$set.category) || update.category;
+          }
+        }
+        return category === "clothing";
+      },
+      // 2. Prevent adding a subcategory if the category is NOT "clothing"
+      validate: {
+        validator: function (value) {
+          let category = this.category;
+          
+          // Handle context for Mongoose update operations where 'this' is the Query object
+          if (!category && typeof this.getUpdate === "function") {
+            const update = this.getUpdate();
+            if (update) {
+              category = (update.$set && update.$set.category) || update.category;
+            }
+          }
+          
+          if (value && category && category !== "clothing") {
+            return false;
+          }
+          return true;
+        },
+        message: "Subcategory is only allowed for the 'clothing' category.",
+      },
     },
 
     size: {
       type: String,
       default: null,
     },
-
     measurements: {
       type: String,
       default: null,
     },
-
     colors: {
-      type: [String],
+      type: String,
       required: true,
     },
-
     images: {
       type: [String],
       default: [],
     },
-
     stock: {
       type: Number,
       required: true,
       default: 1,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    // NEW: Ensure virtual fields are included when you send the data as JSON
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
+
+// NEW: Virtual property to calculate if the product is less than 30 days old
+productSchema.virtual("isLatest").get(function () {
+  if (!this.createdAt) return false;
+
+  const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+  const now = new Date();
+
+  // Returns true if the difference between now and creation date is less than 30 days
+  return now - this.createdAt < thirtyDaysInMs;
+});
 
 const productModel = mongoose.model("Product", productSchema);
 

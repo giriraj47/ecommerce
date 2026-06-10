@@ -6,6 +6,7 @@ import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
 import "../styles/productdetails.scss";
 import { useEffect, useState } from "react";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -61,17 +62,36 @@ const ProductDetails = () => {
       <div className="product-details-content">
         {/* Left Side: Images */}
         <div className="product-images-section">
-          <img className="main-image" src={product.images[activeImage]} alt={product.name} />
-          <div className="thumbnail-grid">
-            {product.images.map((img, index) => (
-              <div
-                key={index}
-                className={`thumbnail ${activeImage === index ? "active" : ""}`}
-                onClick={() => setActiveImage(index)}
+          <div className="carousel-container">
+            <img
+              className="main-image"
+              src={product.images[activeImage]}
+              alt={product.name}
+            />
+            <div className="carousel-nav">
+              <button
+                className="prev-btn"
+                onClick={() =>
+                  setActiveImage(
+                    (prev) =>
+                      (prev - 1 + product.images.length) %
+                      product.images.length,
+                  )
+                }
+                aria-label="Previous Image"
               >
-                <img src={img} alt={`${product.name} ${index + 1}`} />
-              </div>
-            ))}
+                <MdArrowBackIosNew />
+              </button>
+              <button
+                className="next-btn"
+                onClick={() =>
+                  setActiveImage((prev) => (prev + 1) % product.images.length)
+                }
+                aria-label="Next Image"
+              >
+                <MdArrowForwardIos />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -86,39 +106,36 @@ const ProductDetails = () => {
             <p>{product.description}</p>
           </div>
 
-          <div className="detail-options">
-            {product.colors && product.colors.length > 0 && (
-              <div className="option-group">
-                <h3>Colors</h3>
-                <div className="color-list">
-                  {product.colors.map((color, index) => (
-                    <span key={index} className="color-tag">
-                      {color}
-                    </span>
-                  ))}
-                </div>
+          <div className="detail-specifications">
+            {product.colors && (
+              <div className="spec-row">
+                <span className="spec-label">Color</span>
+                <span className="spec-value">{product.colors}</span>
               </div>
             )}
-
-            {
-              <div className="option-group">
-                <h3>Available Sizes</h3>
-                <div className="size-list">
-                  <span className="size-tag">{product.size}</span>
-                  <span className="size-tag">{product.measurements}</span>
-                </div>
+            {product.size && (
+              <div className="spec-row">
+                <span className="spec-label">Size</span>
+                <span className="spec-value">{product.size}</span>
               </div>
-            }
+            )}
+            {product.measurements && (
+              <div className="spec-row spec-row--block">
+                <span className="spec-label">Measurements</span>
+                <span className="spec-value">{product.measurements}</span>
+              </div>
+            )}
           </div>
 
-          {product.stock < 7 && (
-            <div className="stock-info">
-              <span
-                className={`status-dot ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}
-              ></span>
-              {product.stock === 0 ? "Out of Stock" : `${product.stock} units in stock`}
+          {/* {product.stock < 7 && (
+            <div
+              className={`stock-info ${product.stock > 0 ? "stock-info--low" : "stock-info--out"}`}
+            >
+              {product.stock === 0
+                ? "Out of Stock"
+                : `Only ${product.stock} left in stock`}
             </div>
-          )}
+          )} */}
 
           <button
             className="add-to-cart-big-btn"

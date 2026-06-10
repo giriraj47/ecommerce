@@ -4,10 +4,10 @@ import { getMeApi } from "./services/auth.api";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState(null);
 
   // Initial user fetch
@@ -17,16 +17,13 @@ export const AuthProvider = ({ children }) => {
         const data = await getMeApi();
         setUser(data.user);
         setIsAuthenticated(true);
-        if (data.user.role === "admin") {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
       } catch (err) {
+        console.log(err);
         setIsAuthenticated(false);
         setUser(null);
       } finally {
         setLoading(false);
+        setAuthChecked(true);
       }
     };
     initAuth();
@@ -41,9 +38,9 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated,
         loading,
         setLoading,
+        authChecked,
         error,
         setError,
-        isAdmin,
       }}
     >
       {children}

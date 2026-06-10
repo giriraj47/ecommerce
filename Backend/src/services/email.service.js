@@ -63,8 +63,10 @@ async function forgetPasswordEmail(userEmail, name, resetLink) {
 
 async function sendOrderConfirmationEmail(userEmail, userName, order) {
   const subject = `Order Confirmed! Receipt for Order #${order._id}`;
-  
-  const productRowsHtml = order.products.map(item => `
+
+  const productRowsHtml = order.products
+    .map(
+      (item) => `
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
         <span style="font-weight: bold; color: #1e293b;">${item.name}</span><br>
@@ -74,7 +76,9 @@ async function sendOrderConfirmationEmail(userEmail, userName, order) {
         $${item.subtotal.toFixed(2)}
       </td>
     </tr>
-  `).join("");
+  `,
+    )
+    .join("");
 
   const text = `Hello ${userName},\n\nThank you for your order! Your order #${order._id} has been confirmed. Total Amount: $${order.totalAmount.toFixed(2)}.\n\nShipping Details:\n${order.shippingAddress.fullName}\n${order.shippingAddress.address}, ${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.postalCode}\n\nBest regards,\nThe Ecommerce App Team`;
 

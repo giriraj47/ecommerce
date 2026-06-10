@@ -5,7 +5,7 @@ import { useCart } from "../features/cart/hooks/useCart";
 import "./Navbar.scss";
 
 const Navbar = () => {
-  const { isAuthenticated, logout, isAdmin } = useAuth();
+  const { isAuthenticated, logout, isAdmin, authChecked } = useAuth();
   const { cartItems, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,38 +34,66 @@ const Navbar = () => {
         </nav>
 
         <nav className="navbar-global__right">
-          {isAuthenticated ? (
-            <>
-              {isAdmin && (
-                <Link to="/admin/orders" className="navbar-global__link">
-                  Admin
-                </Link>
-              )}
-              <Link to="/orders" className="navbar-global__link">
-                Orders
-              </Link>
-              <Link to="/profile" className="navbar-global__link">
-                Profile
-              </Link>
-              <button
-                className="navbar-global__link"
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link to="/login" className="navbar-global__link">
-              Login
+          {authChecked && isAdmin && (
+            <Link to="/admin" className="navbar-global__link">
+              Admin
             </Link>
           )}
-          <button 
-            className="navbar-global__link" 
+
+          <div className="navbar-global__profile-menu">
+            <Link to="/profile" className="navbar-global__profile-trigger" aria-label="Profile menu">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 21a8 8 0 0 0-16 0" />
+                <circle cx="12" cy="8" r="4" />
+              </svg>
+            </Link>
+
+            <div className="navbar-global__profile-dropdown">
+              {authChecked && isAuthenticated ? (
+                <>
+                  <Link to="/profile" className="navbar-global__dropdown-item">
+                    Edit Profile
+                  </Link>
+                  <Link to="/orders" className="navbar-global__dropdown-item">
+                    My Orders
+                  </Link>
+                  <button
+                    className="navbar-global__dropdown-item"
+                    onClick={() => {
+                      logout();
+                      navigate("/login");
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" className="navbar-global__dropdown-item">
+                  Login
+                </Link>
+              )}
+            </div>
+          </div>
+
+          <button
+            className="navbar-global__link"
             onClick={() => setIsCartOpen(true)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0 }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              font: "inherit",
+              padding: 0,
+            }}
           >
             Cart {totalItemsCount > 0 && `(${totalItemsCount})`}
           </button>

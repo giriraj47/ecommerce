@@ -23,10 +23,12 @@ export const useAuth = () => {
     setIsAuthenticated,
     loading,
     setLoading,
+    authChecked,
     error,
     setError,
-    isAdmin,
   } = context;
+
+  const isAdmin = user?.role === "admin";
 
   const login = async (email, password) => {
     setLoading(true);
@@ -120,6 +122,7 @@ export const useAuth = () => {
     user,
     isAuthenticated,
     loading,
+    authChecked,
     error,
     login,
     register,

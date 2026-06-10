@@ -15,6 +15,7 @@ const createProduct = async (req, res) => {
       description,
       price,
       category,
+      subCategory,
       size,
       colors,
       stock,
@@ -43,10 +44,11 @@ const createProduct = async (req, res) => {
       description,
       price,
       category,
+      subCategory,
       stock,
       size,
       measurements,
-      colors: colors,
+      colors,
       images: imageUrls,
     });
 
@@ -99,6 +101,7 @@ const updateProduct = async (req, res) => {
     }
 
     let updateData = { ...req.body };
+    console.log(updateData);
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) => uploadImage(file.path));
@@ -175,8 +178,12 @@ const getAllProducts = async (req, res) => {
 
     // Category mapping
     if (category && category !== "ALL") {
-      if (category === "FOOTWARE") {
-        filter.category = "shoes";
+      if (
+        category === "FOOTWEAR" ||
+        category === "FOOTWARE" ||
+        category === "FOOTWERE"
+      ) {
+        filter.category = "footwear";
       } else if (category === "ACCESSORIES") {
         filter.category = "accessories";
       } else if (category === "TOPS") {
@@ -184,37 +191,59 @@ const getAllProducts = async (req, res) => {
         if (search) {
           filter.$and = [
             { name: { $regex: search, $options: "i" } },
-            { name: { $regex: /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i } }
+            {
+              name: {
+                $regex:
+                  /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i,
+              },
+            },
           ];
         } else {
-          filter.name = { $regex: /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i };
+          filter.name = {
+            $regex:
+              /(shirt|tee|sweatshirt|hoodie|blazer|jacket|top|vest|polo|cardigan)/i,
+          };
         }
       } else if (category === "BOTTOMS") {
         filter.category = "clothing";
         if (search) {
           filter.$and = [
             { name: { $regex: search, $options: "i" } },
-            { name: { $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i } }
+            {
+              name: {
+                $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i,
+              },
+            },
           ];
         } else {
-          filter.name = { $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i };
+          filter.name = {
+            $regex: /(pant|trouser|jean|short|skirt|legging|jogger)/i,
+          };
         }
       }
     }
 
     // Price bands mapping
     if (price) {
-      const bands = price.split(",").map(b => b.trim()).filter(b => b !== "");
+      const bands = price
+        .split(",")
+        .map((b) => b.trim())
+        .filter((b) => b !== "");
       if (bands.length > 0) {
-        const priceFilters = bands.map((band) => {
-          if (band === "Under $25") return { price: { $lt: 25 } };
-          if (band === "$25 - $50") return { price: { $gte: 25, $lte: 50 } };
-          if (band === "$50 - $100") return { price: { $gte: 50, $lte: 100 } };
-          if (band === "$100 - $200") return { price: { $gte: 100, $lte: 200 } };
-          if (band === "$200 - $500") return { price: { $gte: 200, $lte: 500 } };
-          if (band === "Above $500") return { price: { $gt: 500 } };
-          return null;
-        }).filter(f => f !== null);
+        const priceFilters = bands
+          .map((band) => {
+            if (band === "Under $25") return { price: { $lt: 25 } };
+            if (band === "$25 - $50") return { price: { $gte: 25, $lte: 50 } };
+            if (band === "$50 - $100")
+              return { price: { $gte: 50, $lte: 100 } };
+            if (band === "$100 - $200")
+              return { price: { $gte: 100, $lte: 200 } };
+            if (band === "$200 - $500")
+              return { price: { $gte: 200, $lte: 500 } };
+            if (band === "Above $500") return { price: { $gt: 500 } };
+            return null;
+          })
+          .filter((f) => f !== null);
 
         if (priceFilters.length > 0) {
           filter.$or = priceFilters;
@@ -250,7 +279,7 @@ const getAllProducts = async (req, res) => {
     const products = await productModel
       .find(filter)
       .sort(sortQuery)
-      .select("name price stock")
+      .select("name price stock category subCategory ")
       .slice("images", 1)
       .skip(skip)
       .limit(limit);
@@ -286,7 +315,7 @@ const getProductById = async (req, res) => {
   const product = await productModel
     .findById(req.params.id)
     .select(
-      "name description price category size colors images stock measurements",
+      "name description price category subCategory size colors images stock measurements",
     );
 
   if (!product) {
@@ -297,10 +326,41 @@ const getProductById = async (req, res) => {
   res.status(200).json({ message: "Product found", product });
 };
 
+const getLatestProducts = async (req, res) => {
+  try {
+    const products = await productModel
+      .find({ isLatest: true })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select("name price")
+      .slice("images", 1);
+    res.status(200).json({ products });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const products = await productModel
+      .find({ category })
+      .sort({ createdAt: -1 })
+      .limit(7)
+      .select("name price")
+      .slice("images", 1);
+    res.status(200).json({ products });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  getLatestProducts,
+  getProductsByCategory,
 };
