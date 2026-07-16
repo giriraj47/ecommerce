@@ -237,7 +237,7 @@ async function forgetPassword(req, res) {
     resetPasswordExpires: Date.now() + 1000 * 60 * 15,
   });
 
-  const link = `http://localhost:5173/reset-password?token=${token}`;
+  const link = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
 
   await forgetPasswordEmail(email, user.name, link);
 

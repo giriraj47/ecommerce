@@ -24,13 +24,13 @@ authRouter.get(
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login",
+    failureRedirect: `${process.env.FRONTEND_URL || "http://localhost:5173"}/login`,
   }),
   function (req, res) {
     // Successful authentication
     console.log(req.user);
     req.session.save(() => {
-      res.redirect("http://localhost:5173/");
+      res.redirect(process.env.FRONTEND_URL || "http://localhost:5173/");
     });
   },
 );

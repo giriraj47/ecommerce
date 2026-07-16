@@ -13,12 +13,24 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
+
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
 
 app.use(
   session({
@@ -26,7 +38,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Changed to false for local development unless using HTTPS
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     },
