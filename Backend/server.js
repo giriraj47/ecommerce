@@ -1,4 +1,7 @@
 require("dotenv").config();
+if (process.env.FRONTEND_URL) {
+  process.env.FRONTEND_URL = process.env.FRONTEND_URL.replace(/\/$/, "");
+}
 const app = require("./src/app");
 const connectDb = require("./src/config/db");
 const { connectRedis } = require("./src/config/redis");
