@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useProducts } from "../hooks/useProducts";
+import { useProductsQuery, useProducts } from "../hooks/useProducts";
 import { useAuth } from "../../auth/hooks/useAuth";
 import DeleteButton from "../components/DeleteButton";
 import "../styles/products.scss";
@@ -22,25 +22,41 @@ const PRICE_BANDS = [
   "Above $500",
 ];
 
+// Helper to transform raw Cloudinary URLs into optimized low-bandwidth thumbnails
+const getOptimizedImage = (url) => {
+  if (!url) return null;
+  if (url.includes("cloudinary.com")) {
+    return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/");
+  }
+  return url;
+};
+
 const Products = () => {
-  const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [sortLabel, setSortLabel] = useState("Relevance");
   const [sortOpen, setSortOpen] = useState(false);
   const [priceBands, setPriceBands] = useState([]);
-  const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [params, setParams] = useSearchParams();
 
-  const { products, loading, error, getAllProducts, totalPages } =
-    useProducts();
+  const { deleteProduct } = useProducts();
   const { isAdmin } = useAuth();
 
   const priceFilter = useMemo(() => priceBands.join(","), [priceBands]);
-
   const currentPage = Number(params.get("page")) || 1;
   const search = params.get("search") || "";
 
-  const handleSearch = () => updateParams(setParams, 1, query);
+  // TanStack Query custom hook for cached, instant data fetching
+  const { data, isLoading, isError, error, refetch } = useProductsQuery(
+    currentPage,
+    search,
+    activeCategory,
+    sortLabel,
+    priceFilter,
+  );
+
+  const products = data?.products || (Array.isArray(data) ? data : []);
+  const totalPages = data?.totalPages || 1;
+  const totalProductsCount = data?.totalProducts ?? products.length;
 
   const toggleBand = (band) =>
     setPriceBands((prev) =>
@@ -48,36 +64,10 @@ const Products = () => {
     );
 
   useEffect(() => {
-    const fetchFilteredProducts = async () => {
-      try {
-        const data = await getAllProducts(
-          currentPage,
-          search,
-          activeCategory,
-          sortLabel,
-          priceFilter,
-        );
-        if (data && typeof data.totalProducts !== "undefined") {
-          setTotalProductsCount(data.totalProducts);
-        } else if (data && Array.isArray(data.products)) {
-          setTotalProductsCount(data.products.length);
-        }
-      } catch (err) {
-        console.error("Error fetching filtered products:", err);
-      }
-    };
-    fetchFilteredProducts();
-
-    // Sync React state back to URLSearchParams silently (without re-triggering this effect)
-    const newParams = {};
-    if (currentPage > 1) newParams.page = currentPage;
-    if (search) newParams.search = search;
-    setParams(newParams, { replace: true });
-
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage, search, activeCategory, sortLabel, priceFilter]);
+  }, [currentPage]);
 
-  if (error) return <div className="pp-error">{error}</div>;
+  if (isError) return <div className="pp-error">{error?.message || "Failed to load products"}</div>;
 
   return (
     <div className="pp">
@@ -86,18 +76,6 @@ const Products = () => {
         <h1 className="pp__page-title">Categories</h1>
 
         <div className="pp__subheader-right">
-          {/* Search */}
-          {/* <div className="pp__search-wrap">
-            <input
-              className="pp__search-input"
-              type="text"
-              placeholder="Search…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            />
-          </div> */}
-
           {/* Sort dropdown */}
           <div className="pp__sort-dropdown">
             <button
@@ -133,7 +111,7 @@ const Products = () => {
           </div>
 
           <span className="pp__count">
-            {loading ? "—" : `${totalProductsCount} Products`}
+            {isLoading ? "—" : `${totalProductsCount} Products`}
           </span>
         </div>
       </div>
@@ -181,7 +159,7 @@ const Products = () => {
 
         {/* Grid */}
         <main className="pp__grid-area">
-          {loading ? (
+          {isLoading ? (
             <div className="pp__grid">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div className="pp__skeleton" key={i} />
@@ -203,7 +181,7 @@ const Products = () => {
                       <DeleteButton
                         productId={product._id}
                         productName={product.name}
-                        onDeleteSuccess={getAllProducts}
+                        onDeleteSuccess={refetch}
                       />
                     </div>
                   )}
@@ -211,7 +189,7 @@ const Products = () => {
                   <div className="pp__card-img">
                     {product.images?.length > 0 ? (
                       <img
-                        src={product.images[0]}
+                        src={getOptimizedImage(product.images[0])}
                         alt={product.name}
                         loading="lazy"
                       />

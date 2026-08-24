@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProductContext } from "../product.context";
 import {
   getAllProductsApi,
@@ -8,10 +9,24 @@ import {
   deleteProductApi,
 } from "../services/product.api";
 
+// Custom hook leveraging TanStack Query for product listing with automatic caching
+export const useProductsQuery = (
+  page = 1,
+  search = "",
+  category = "",
+  sort = "",
+  price = "",
+) => {
+  return useQuery({
+    queryKey: ["products", { page, search, category, sort, price }],
+    queryFn: () => getAllProductsApi(page, search, category, sort, price),
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  });
+};
+
 export const useProducts = () => {
   const context = useContext(ProductContext);
-  const params = new URLSearchParams(location.search);
-  const page = params.get("page") || 1;
+  const queryClient = useQueryClient();
 
   if (!context) {
     throw new Error("useProducts must be used within a ProductProvider");
@@ -32,46 +47,80 @@ export const useProducts = () => {
     setSearch,
   } = context;
 
-  const getAllProducts = async (page = 1, search = "", category = "", sort = "", price = "") => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getAllProductsApi(page, search, category, sort, price);
-      // Adjusting based on common API response pattern
-      setProducts(Array.isArray(data) ? data : data.products || []);
-      setCurrentPage(data.currentPage);
-      setTotalPages(data.totalPages);
-      setSearch(data.search);
-      return data;
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch products");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getAllProducts = useCallback(
+    async (page = 1, search = "", category = "", sort = "", price = "") => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await queryClient.fetchQuery({
+          queryKey: ["products", { page, search, category, sort, price }],
+          queryFn: () => getAllProductsApi(page, search, category, sort, price),
+        });
+        setProducts(Array.isArray(data) ? data : data.products || []);
+        setCurrentPage(data.currentPage || page);
+        setTotalPages(data.totalPages || 1);
+        setSearch(data.search || search);
+        return data;
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch products");
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [queryClient, setProducts, setCurrentPage, setTotalPages, setSearch, setLoading, setError],
+  );
 
   const getProductById = async (id) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getProductByIdApi(id);
-      return data;
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch product");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    return queryClient.fetchQuery({
+      queryKey: ["product", id],
+      queryFn: async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          return await getProductByIdApi(id);
+        } catch (err) {
+          setError(err.response?.data?.message || "Failed to fetch product");
+          throw err;
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
+
+  const createMutation = useMutation({
+    mutationFn: createProductApi,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      setProducts((prev) => [...prev, data.data]);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, productData }) => updateProductApi(id, productData),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", variables.id] });
+      setProducts((prev) =>
+        prev.map((p) => (p._id === variables.id ? data.product : p)),
+      );
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteProductApi,
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+    },
+  });
 
   const createProduct = async (productData) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await createProductApi(productData);
-      setProducts((prev) => [...prev, data.data]);
-      return data;
+      return await createMutation.mutateAsync(productData);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create product");
       throw err;
@@ -83,16 +132,10 @@ export const useProducts = () => {
   const updateProduct = async (id, productData) => {
     setLoading(true);
     setError(null);
-
     try {
-      const data = await updateProductApi(id, productData);
-
-      setProducts((prev) => prev.map((p) => (p._id === id ? data.product : p)));
-
-      return data;
+      return await updateMutation.mutateAsync({ id, productData });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update product");
-
       throw err;
     } finally {
       setLoading(false);
@@ -103,8 +146,7 @@ export const useProducts = () => {
     setLoading(true);
     setError(null);
     try {
-      await deleteProductApi(id);
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+      return await deleteMutation.mutateAsync(id);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete product");
       throw err;

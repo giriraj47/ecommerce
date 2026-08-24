@@ -146,12 +146,13 @@ const getAllProducts = async (req, res) => {
     const limit = 16;
     const skip = (page - 1) * limit;
 
-    const filter = {
-      name: {
+    const filter = {};
+    if (search) {
+      filter.name = {
         $regex: search,
         $options: "i",
-      },
-    };
+      };
+    }
 
     if (category && category !== "ALL") {
       if (
@@ -244,15 +245,18 @@ const getAllProducts = async (req, res) => {
       }
     }
 
-    const products = await productModel
-      .find(filter)
-      .sort(sortQuery)
-      .select("name price stock category subCategory ")
-      .slice("images", 1)
-      .skip(skip)
-      .limit(limit);
-
-    const totalProducts = await productModel.countDocuments(filter);
+    // Parallelize find query with lean optimization and total count calculation
+    const [products, totalProducts] = await Promise.all([
+      productModel
+        .find(filter)
+        .sort(sortQuery)
+        .select("name price stock category subCategory images")
+        .slice("images", 1)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      productModel.countDocuments(filter),
+    ]);
 
     const responseData = {
       success: true,
@@ -284,7 +288,8 @@ const getProductById = async (req, res) => {
       .findById(req.params.id)
       .select(
         "name description price category subCategory size colors images stock measurements",
-      );
+      )
+      .lean();
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -302,8 +307,9 @@ const getLatestProducts = async (req, res) => {
       .find({ isLatest: true })
       .sort({ createdAt: -1 })
       .limit(10)
-      .select("name price")
-      .slice("images", 1);
+      .select("name price images")
+      .slice("images", 1)
+      .lean();
     res.status(200).json({ products });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -317,8 +323,9 @@ const getProductsByCategory = async (req, res) => {
       .find({ category })
       .sort({ createdAt: -1 })
       .limit(7)
-      .select("name price")
-      .slice("images", 1);
+      .select("name price images")
+      .slice("images", 1)
+      .lean();
     res.status(200).json({ products });
   } catch (err) {
     res.status(500).json({ message: err.message });

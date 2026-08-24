@@ -79,6 +79,11 @@ const productSchema = new mongoose.Schema(
   },
 );
 
+// Indexes to speed up queries, regex searches, and sorting
+productSchema.index({ name: 1, category: 1, price: 1, createdAt: -1 });
+productSchema.index({ category: 1 });
+productSchema.index({ price: 1 });
+
 productSchema.virtual("isLatest").get(function () {
   if (!this.createdAt) return false;
   const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
