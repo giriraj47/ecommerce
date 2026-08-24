@@ -31,6 +31,42 @@ const getOptimizedImage = (url) => {
   return url;
 };
 
+// Helper to generate pagination page numbers with ellipsis
+const getPaginationItems = (currentPage, totalPages) => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const pages = [];
+  const delta = 1;
+  const left = currentPage - delta;
+  const right = currentPage + delta;
+
+  let range = [];
+  let rangeWithDots = [];
+  let l;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l !== 1) {
+        rangeWithDots.push("...");
+      }
+    }
+    rangeWithDots.push(i);
+    l = i;
+  }
+
+  return rangeWithDots;
+};
+
 const Products = () => {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [sortLabel, setSortLabel] = useState("Relevance");
@@ -220,8 +256,12 @@ const Products = () => {
                 ← Prev
               </button>
               <div className="pp__page-numbers">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (p) => (
+                {getPaginationItems(currentPage, totalPages).map((p, idx) =>
+                  p === "..." ? (
+                    <span key={`dots-${idx}`} className="pp__page-dots">
+                      ...
+                    </span>
+                  ) : (
                     <button
                       key={p}
                       className={`pp__page-num${p === currentPage ? " pp__page-num--active" : ""}`}
