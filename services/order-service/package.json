@@ -1,0 +1,21 @@
+{
+  "name": "order-service",
+  "version": "1.0.0",
+  "description": "Order Microservice for Cart, Razorpay Checkout, and Orders",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "npx nodemon src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "nodemailer": "^8.0.7",
+    "razorpay": "^2.9.6",
+    "redis": "^5.12.1"
+  }
+}
