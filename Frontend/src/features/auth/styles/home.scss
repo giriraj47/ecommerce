@@ -54,11 +54,13 @@
     &__right {
       display: flex;
       align-items: center;
-      gap: 2.5rem;
+      gap: 2rem;
       flex: 1;
       justify-content: flex-end;
 
-      a, button {
+      & > a,
+      & > button,
+      .hero-nav__cart-btn {
         font-family: "Inter", sans-serif;
         font-weight: 400;
         font-size: 1.125rem;
@@ -101,14 +103,41 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
 
       .hero-nav__left a,
-      .hero-nav__right a,
-      .hero-nav__right button {
+      .hero-nav__right > a,
+      .hero-nav__right > button,
+      .hero-nav__right .hero-nav__cart-btn {
         color: #000;
       }
 
       .hero-nav__logo img {
         filter: none;
         transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 0 1.5rem;
+      height: 75px;
+
+      &__left {
+        gap: 1.25rem;
+        a {
+          font-size: 0.95rem;
+        }
+      }
+
+      &__right {
+        gap: 1.25rem;
+        & > a,
+        & > button,
+        .hero-nav__cart-btn {
+          font-size: 0.95rem;
+        }
+      }
+
+      &__logo img {
+        width: 36px;
+        height: 36px;
       }
     }
   }

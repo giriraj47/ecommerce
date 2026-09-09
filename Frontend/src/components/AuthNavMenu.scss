@@ -1,0 +1,294 @@
+// AuthNavMenu.scss
+$font-family-base: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+.auth-nav-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: $font-family-base;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+  border-radius: 9999px;
+  line-height: 1;
+  transition: opacity 0.2s ease, color 0.2s ease;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  // ── Global Navbar variant (Products page, Shop, etc.) ──────────────────────
+  &--global {
+    padding: 0.45rem 1.15rem;
+    background: transparent;
+    color: #111111;
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
+  }
+
+  // ── Hero Navbar variant (Home page hero transparent overlay) ───────────────
+  &--hero {
+    padding: 0.48rem 1.25rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  // ── Hero Navbar scrolled state (White glass background) ───────────────────
+  &--hero-scrolled {
+    background: transparent;
+    color: #000000;
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+// ── Profile Dropdown Trigger & Container ─────────────────────────────────────
+.auth-nav-profile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-family: $font-family-base;
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: transparent;
+    border: none;
+    padding: 0.35rem 0.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+    user-select: none;
+    line-height: 1;
+
+    &:hover {
+      opacity: 0.75;
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  &__name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__chevron {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.4;
+    transition: transform 0.2s ease;
+    opacity: 0.75;
+
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+
+  // ── Styling for Global navbar (light mode) ─────────────────────────────────
+  &--global {
+    .auth-nav-profile__trigger {
+      color: #111111;
+    }
+
+    .auth-nav-profile__avatar {
+      background: #111111;
+      color: #ffffff;
+    }
+  }
+
+  // ── Styling for Hero navbar (dark mode transparent) ───────────────────────
+  &--hero {
+    .auth-nav-profile__trigger {
+      color: #ffffff;
+    }
+
+    .auth-nav-profile__avatar {
+      background: #ffffff;
+      color: #000000;
+    }
+  }
+
+  // ── Styling for Hero navbar scrolled (white glass) ────────────────────────
+  &--hero-scrolled {
+    .auth-nav-profile__trigger {
+      color: #000000;
+    }
+
+    .auth-nav-profile__avatar {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+}
+
+// ── Dropdown Overlay Card (Opens on click) ───────────────────────────────────
+.auth-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.12),
+    0 3px 8px rgba(0, 0, 0, 0.04);
+  padding: 0.6rem;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  animation: authDropdownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+  box-sizing: border-box;
+
+  &__header {
+    padding: 0.5rem 0.65rem 0.55rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  &__greeting {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888888;
+    line-height: 1.2;
+  }
+
+  &__user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111111;
+    margin-top: 0.2rem;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__user-email {
+    font-size: 0.8rem;
+    color: #666666;
+    margin-top: 0.1rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 0.35rem 0;
+    width: 100%;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #222222;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: $font-family-base;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      flex-shrink: 0;
+      opacity: 0.75;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &--logout {
+      color: #b91c1c;
+
+      svg {
+        stroke: #b91c1c;
+      }
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.06);
+        color: #dc2626;
+
+        svg {
+          stroke: #dc2626;
+        }
+      }
+    }
+  }
+}
+
+@keyframes authDropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

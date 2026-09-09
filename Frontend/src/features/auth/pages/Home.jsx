@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/home.scss";
 import Products from "../components/Products";
 import Footer from "../components/Footer";
 import { useCart } from "../../cart/hooks/useCart";
+import AuthNavMenu from "../../../components/AuthNavMenu";
 
 const images = [
   "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152696/Effortless_Casual_Street_Style_White_Shirt_Wide-Leg_Denim_Look_xvkwwp.jpg",
@@ -79,7 +80,7 @@ const Home = () => {
             />
           </div>
           <div className="hero-nav__right">
-            <Link to="/search">Search</Link>
+            <AuthNavMenu variant="hero" isScrolled={isScrolled} />
             <button 
               className="hero-nav__cart-btn" 
               onClick={() => setIsCartOpen(true)}
