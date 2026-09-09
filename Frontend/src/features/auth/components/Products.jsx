@@ -1,124 +1,42 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useQuery, useQueries } from "@tanstack/react-query";
+import {
+  getLatestProductsApi,
+  getProductsByCategoryApi,
+} from "../../products/services/product.api";
 import "../styles/products.scss";
 import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 
-const justIn = [
-  {
-    img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__shhtn6.webp",
-    name: "Pleated loose leg pants",
-    price: "$60.00",
-  },
-  {
-    img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/__3_x38ew4.webp",
-    name: "Sabine Striped Articulated Shirt",
-    price: "$125.00",
-  },
-  {
-    img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152696/Effortless_Casual_Street_Style_White_Shirt_Wide-Leg_Denim_Look_xvkwwp.jpg",
-    name: "Oversized Button Up Shirt",
-    price: "$25.00",
-  },
-  {
-    img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__r6hrwn.jpg",
-    name: "Linen-Blend Baggy Trouser",
-    price: "$90.00",
-  },
-  {
-    img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/The_Perfect_Linen_Striped_Top_u61riq.jpg",
-    name: "Blunt classic stripe shirt",
-    price: "$70.00",
-  },
-];
-
-const shopBy = {
-  TOPS: [
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/__4_w601yn.webp",
-      name: "Elegant Long Sleeve Plaid Shirt",
-      price: "$100.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152694/Men_s_Striped_Print_Sweatshirts_Long_Sleeve_Collared_Preppy_Shirts_Half_Plack__ejwaok.jpg",
-      name: "Striped Print Sweatshirt",
-      price: "$55.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152694/Rugby_shirt_with_striped_placket_irplgr.jpg",
-      name: "Rugby shirt with striped placket",
-      price: "$55.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152693/daxuen-distressed-graphic-oversized-t-shirt-6-edbdd6_l7nhva.webp",
-      name: "Distressed Graphic Oversized T-Shirt",
-      price: "$10.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152692/HEAVYWEIGHT_FITTED_SLUB_TEE_WHITE_-_S_zcxmep.jpg",
-      name: "Heavyweight Fitted Slub Tee",
-      price: "$50.00",
-    },
-  ],
-  BOTTOMS: [
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__shhtn6.webp",
-      name: "Pleated loose leg pants",
-      price: "$60.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__r6hrwn.jpg",
-      name: "Linen-Blend Baggy Trouser",
-      price: "$90.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152696/Effortless_Casual_Street_Style_White_Shirt_Wide-Leg_Denim_Look_xvkwwp.jpg",
-      name: "Wide-Leg Denim",
-      price: "$75.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/__3_x38ew4.webp",
-      name: "Relaxed Fit Trousers",
-      price: "$65.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/The_Perfect_Linen_Striped_Top_u61riq.jpg",
-      name: "Linen Stripe Pants",
-      price: "$80.00",
-    },
-  ],
-  FOOTWEAR: [
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152695/__4_w601yn.webp",
-      name: "Classic White Sneakers",
-      price: "$110.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152694/Rugby_shirt_with_striped_placket_irplgr.jpg",
-      name: "Leather Loafers",
-      price: "$145.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152693/daxuen-distressed-graphic-oversized-t-shirt-6-edbdd6_l7nhva.webp",
-      name: "Canvas Low-Top",
-      price: "$55.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152692/HEAVYWEIGHT_FITTED_SLUB_TEE_WHITE_-_S_zcxmep.jpg",
-      name: "Suede Chelsea Boot",
-      price: "$175.00",
-    },
-    {
-      img: "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__shhtn6.webp",
-      name: "Slip-On Mule",
-      price: "$90.00",
-    },
-  ],
-};
-
 const CATEGORIES = ["TOPS", "BOTTOMS", "FOOTWEAR"];
 
+// Transform Cloudinary URLs to modern compressed thumbnails
+const getOptimizedImage = (url) => {
+  if (!url) return null;
+  if (url.includes("cloudinary.com")) {
+    return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/");
+  }
+  return url;
+};
+
+const formatPrice = (price) => {
+  if (typeof price === "number") {
+    return `$${price.toFixed(2)}`;
+  }
+  if (!price) return "$0.00";
+  return price.startsWith("$") ? price : `$${price}`;
+};
+
+const ProductSkeleton = () => (
+  <div className="prod-card prod-card--skeleton">
+    <div className="prod-card__img-wrap prod-card__skeleton-img" />
+    <div className="prod-card__skeleton-line prod-card__skeleton-line--title" />
+    <div className="prod-card__skeleton-line prod-card__skeleton-line--price" />
+  </div>
+);
+
 // Generic horizontally-scrollable product row
-const ProductRow = ({ items }) => {
+const ProductRow = ({ items = [], isLoading = false }) => {
   const rowRef = useRef(null);
 
   const scroll = (dir) => {
@@ -138,15 +56,34 @@ const ProductRow = ({ items }) => {
       </button>
 
       <div className="prod-row" ref={rowRef}>
-        {items.map((item, i) => (
-          <Link to="/products" className="prod-card" key={i}>
-            <div className="prod-card__img-wrap">
-              <img src={item.img} alt={item.name} loading="lazy" />
-            </div>
-            <p className="prod-card__name">{item.name}</p>
-            <p className="prod-card__price">{item.price}</p>
-          </Link>
-        ))}
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ProductSkeleton key={i} />)
+        ) : items.length > 0 ? (
+          items.map((item, i) => {
+            const rawImg = item.images?.[0] || item.img;
+            const imgSrc =
+              getOptimizedImage(rawImg) ||
+              "https://res.cloudinary.com/dzplbl3yv/image/upload/v1779152697/__shhtn6.webp";
+            const targetUrl = item._id ? `/products/${item._id}` : "/products";
+
+            return (
+              <Link to={targetUrl} className="prod-card" key={item._id || item.id || i}>
+                <div className="prod-card__img-wrap">
+                  <img
+                    src={imgSrc}
+                    alt={item.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <p className="prod-card__name">{item.name}</p>
+                <p className="prod-card__price">{formatPrice(item.price)}</p>
+              </Link>
+            );
+          })
+        ) : (
+          <p className="prod-row__empty">No products available</p>
+        )}
       </div>
 
       <button
@@ -163,13 +100,33 @@ const ProductRow = ({ items }) => {
 const Products = () => {
   const [activeCategory, setActiveCategory] = useState("TOPS");
 
+  // Fetch the 10 latest products added to the database
+  const { data: justInProducts = [], isLoading: isJustInLoading } = useQuery({
+    queryKey: ["products", "homeJustIn"],
+    queryFn: () => getLatestProductsApi(10),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Concurrently fetch 7 products from each category (TOPS, BOTTOMS, FOOTWEAR)
+  const categoryQueries = useQueries({
+    queries: CATEGORIES.map((cat) => ({
+      queryKey: ["products", "homeShopBy", cat],
+      queryFn: () => getProductsByCategoryApi(cat, 7),
+      staleTime: 1000 * 60 * 5,
+    })),
+  });
+
+  const activeIndex = CATEGORIES.indexOf(activeCategory);
+  const activeCategoryQuery = categoryQueries[activeIndex !== -1 ? activeIndex : 0];
+  const shopByProducts = activeCategoryQuery?.data || [];
+  const isShopByLoading = activeCategoryQuery?.isLoading;
+
   return (
     <section className="products">
       {/* ── JUST IN ───────────────────────────────────────────────── */}
       <div className="products__section">
         <div className="products__header">
           <div className="products__header-left">
-            {/* <span className="products__nav-tick" /> */}
             <h2 className="products__title">JUST IN</h2>
           </div>
           <Link to="/products" className="products__pill">
@@ -177,14 +134,13 @@ const Products = () => {
           </Link>
         </div>
 
-        <ProductRow items={justIn} />
+        <ProductRow items={justInProducts} isLoading={isJustInLoading} />
       </div>
 
       {/* ── SHOP BY ───────────────────────────────────────────────── */}
       <div className="products__section products__section--shopby">
         <div className="products__header">
           <div className="products__header-left">
-            {/* <span className="products__nav-tick" /> */}
             <h2 className="products__title">SHOP BY</h2>
           </div>
           <div className="products__filters">
@@ -203,7 +159,7 @@ const Products = () => {
           </div>
         </div>
 
-        <ProductRow items={shopBy[activeCategory]} />
+        <ProductRow items={shopByProducts} isLoading={isShopByLoading} />
       </div>
     </section>
   );

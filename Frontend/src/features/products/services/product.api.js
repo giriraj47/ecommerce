@@ -41,3 +41,14 @@ export const deleteProductApi = async (id) => {
   const response = await api.delete(`/delete-product/${id}`);
   return response.data;
 };
+
+export const getLatestProductsApi = async (limit = 10) => {
+  const data = await getAllProductsApi(1, "", "", "Newest");
+  return (data?.products || []).slice(0, limit);
+};
+
+export const getProductsByCategoryApi = async (category, limit = 7) => {
+  const data = await getAllProductsApi(1, "", category);
+  return (data?.products || []).slice(0, limit);
+};
+

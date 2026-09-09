@@ -221,4 +221,52 @@
     color: #000;
     margin-top: 0.15rem;
   }
+
+  &--skeleton {
+    pointer-events: none;
+  }
+
+  &__skeleton-img {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: prod-skeleton-shimmer 1.5s infinite ease-in-out;
+  }
+
+  &__skeleton-line {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: prod-skeleton-shimmer 1.5s infinite ease-in-out;
+    border-radius: 4px;
+
+    &--title {
+      height: 16px;
+      width: 80%;
+      margin-top: 0.6rem;
+    }
+
+    &--price {
+      height: 14px;
+      width: 40%;
+      margin-top: 0.35rem;
+    }
+  }
 }
+
+.prod-row__empty {
+  padding: 3rem 1.5rem;
+  color: #777;
+  font-family: "Mona Sans", sans-serif;
+  font-size: 0.95rem;
+  width: 100%;
+  text-align: center;
+}
+
+@keyframes prod-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
