@@ -1,4 +1,4 @@
-# 🛒 E-Commerce Platform
+# 🛒 E-Commerce Platform(https://ecommerce-delta-five-18.vercel.app/)
 
 A modern, full-stack E-Commerce application built with **React** (Vite + Material-UI) on the frontend and **Node.js** (Express + MongoDB) on the backend. This project features user authentication (local & Google OAuth), image upload using Cloudinary, payment gateway integration using Razorpay, caching and token blacklisting using Redis, and a complete order management workflow.
 
